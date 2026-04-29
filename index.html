@@ -9,13 +9,28 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getDatabase, ref, set, remove, onValue, push, update, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-  import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+  import { getStorage, ref as sRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
   const cfg={apiKey:"AIzaSyBkSdYjHaIaaB5OTpXcv0PArP4mmgo23Sk",authDomain:"sutable-99848.firebaseapp.com",databaseURL:"https://sutable-99848-default-rtdb.firebaseio.com",projectId:"sutable-99848",storageBucket:"sutable-99848.appspot.com",messagingSenderId:"218395856479",appId:"1:218395856479:web:7fc33779c10b8182e795ea"};
   const app=initializeApp(cfg);
   const db=getDatabase(app);
   let storage;
-  try { storage=getStorage(app); window._storage=storage; window._sRef=sRef; window._uploadBytes=uploadBytes; window._getDownloadURL=getDownloadURL; } catch(e){}
+  try {
+    storage=getStorage(app);
+    window._storage=storage;
+    window._sRef=sRef;
+    window._uploadFile=async(file,path,onProgress)=>{
+      const r=sRef(storage,path);
+      const task=uploadBytesResumable(r,file);
+      return new Promise((res,rej)=>{
+        task.on('state_changed',
+          snap=>{if(onProgress)onProgress(Math.round(snap.bytesTransferred/snap.totalBytes*100));},
+          rej,
+          async()=>{res(await getDownloadURL(task.snapshot.ref));}
+        );
+      });
+    };
+  } catch(e){console.warn('Storage init failed:',e);}
   window._db=db; window._fbReady=false;
 
   // Content listener — detect new for notifications
@@ -438,6 +453,25 @@ body{font-family:'Poppins',sans-serif;background:var(--black);color:var(--light)
 .add-season-btn:hover{background:rgba(59,130,246,0.15);}
 .cast-row-a{display:grid;grid-template-columns:1fr 1fr 2fr;gap:8px;margin-bottom:7px;align-items:center;}
 .cast-prev-mini{width:32px;height:32px;border-radius:50%;object-fit:cover;display:none;border:2px solid rgba(229,9,20,0.4);}
+
+/* Single image drag-drop zone (poster, cast photo) */
+.img-drop-single{position:relative;border:2px dashed rgba(229,9,20,0.3);border-radius:10px;overflow:hidden;transition:all 0.3s;background:rgba(229,9,20,0.02);min-height:90px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.img-drop-single:hover,.img-drop-single.drag-over{border-color:var(--red);background:rgba(229,9,20,0.07);}
+.img-drop-single input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2;}
+.img-drop-single .drop-hint{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px;pointer-events:none;}
+.img-drop-single .drop-hint i{font-size:22px;color:rgba(229,9,20,0.4);}
+.img-drop-single .drop-hint p{font-size:11px;color:var(--gray);text-align:center;}
+.img-drop-single .drop-hint small{font-size:9px;color:rgba(255,255,255,0.18);}
+.img-drop-single .preview-wrap{position:relative;width:100%;display:none;}
+.img-drop-single .preview-wrap img{width:100%;max-height:120px;object-fit:cover;border-radius:8px;display:block;}
+.img-drop-single .preview-wrap.poster img{max-height:160px;object-fit:contain;background:var(--dark3);}
+.img-drop-single .preview-wrap.circle img{width:64px;height:64px;border-radius:50%;object-fit:cover;margin:0 auto;display:block;}
+.img-drop-single.has-img .drop-hint{display:none;}
+.img-drop-single.has-img .preview-wrap{display:block;}
+.img-drop-single .rm-single{position:absolute;top:6px;right:6px;background:rgba(229,9,20,0.9);color:#fff;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;z-index:3;}
+.img-upload-progress{position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,0.1);z-index:4;display:none;}
+.img-upload-progress .bar{height:100%;background:var(--green);width:0%;transition:width 0.2s;border-radius:2px;}
+.img-upload-progress.show{display:block;}
 .badge-builder{display:flex;flex-wrap:wrap;gap:7px;margin-top:7px;}
 .badge-toggle{padding:5px 13px;border-radius:20px;border:1px solid rgba(255,255,255,0.1);color:var(--gray);font-size:11px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:600;transition:all 0.2s;background:transparent;}
 .badge-toggle.on.bt-season{background:rgba(59,130,246,0.18);border-color:#3b82f6;color:#3b82f6;}
@@ -789,7 +823,16 @@ body{font-family:'Poppins',sans-serif;background:var(--black);color:var(--light)
               <div class="toggle-sw" id="adultToggle"></div>
             </div>
           </div>
-          <div class="fg"><label>🖼 Poster URL</label><input type="text" id="fThumb" placeholder="https://..." oninput="livePreview('fThumb','pThumb')"><img id="pThumb" style="max-height:90px;border-radius:7px;margin-top:8px;display:none;"></div>
+          <div class="fg">
+            <label>🖼 Poster Image</label>
+            <div class="img-drop-single" id="posterDropZone" ondragover="singleDragOver(event,this)" ondragleave="singleDragLeave(this)" ondrop="singleDrop(event,'poster','fThumb','posterPreview','posterProgress')">
+              <input type="file" accept="image/*" onchange="singleFileSelect(event,'poster','fThumb','posterPreview','posterProgress')">
+              <div class="drop-hint"><i class="fas fa-image"></i><p>Drag &amp; drop poster<br>or click to browse</p><small>JPG, PNG, WEBP</small></div>
+              <div class="preview-wrap poster" id="posterPreview"><img src="" alt="Poster"><button class="rm-single" onclick="removeSingleImg(event,'posterDropZone','fThumb','posterPreview')"><i class="fas fa-times"></i></button></div>
+              <div class="img-upload-progress" id="posterProgress"><div class="bar"></div></div>
+            </div>
+            <input type="hidden" id="fThumb">
+          </div>
 
           <!-- Quality Image Drag & Drop -->
           <div class="fg">
@@ -1238,8 +1281,8 @@ function openTrailer(){
 function closePlayer(){document.getElementById('playerModal').classList.remove('open');document.getElementById('playerFrame').innerHTML='';}
 
 /* ===== IMAGE UPLOAD ===== */
-function onDragOver(e){e.preventDefault();document.getElementById('imgDropZone').classList.add('drag-over');}
-function onDragLeave(e){document.getElementById('imgDropZone').classList.remove('drag-over');}
+function onDragOver(e){e.preventDefault();const z=document.getElementById('imgDropZone');if(z)z.classList.add('drag-over');}
+function onDragLeave(e){const z=document.getElementById('imgDropZone');if(z)z.classList.remove('drag-over');}
 function onDrop(e){e.preventDefault();document.getElementById('imgDropZone').classList.remove('drag-over');const files=Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'));processFiles(files);}
 function onFileSelect(e){processFiles(Array.from(e.target.files));}
 function processFiles(files){
@@ -1285,8 +1328,27 @@ function toggle18(){isAdult18=!isAdult18;document.getElementById('adultToggle').
 function setQType(el,v){document.querySelectorAll('.ql-type-btn').forEach(b=>b.classList.remove('on'));el.classList.add('on');selectedQType=v;document.getElementById('fQtype').value=v;}
 function livePreview(iid,pid){const v=document.getElementById(iid)?.value.trim();const img=document.getElementById(pid);if(v){img.src=v;img.style.display='block';}else img.style.display='none';}
 function toggleBadge(el,key){activeBadges[key]=!activeBadges[key];el.classList.toggle('on',activeBadges[key]);}
-function addCastRow(){const b=document.getElementById('castBuilder'),idx=b.children.length;const r=document.createElement('div');r.className='cast-row-a';r.style.marginBottom='7px';const iS='background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:7px 10px;color:#fff;font-size:12px;outline:none;width:100%;';r.innerHTML=`<input type="text" placeholder="Name..." class="c-name" style="${iS}"><input type="text" placeholder="Role..." class="c-role" style="${iS}"><div style="display:flex;gap:6px;align-items:center;"><input type="text" placeholder="Photo URL..." class="c-photo" style="${iS};flex:1;" oninput="castPrev(this)"><img class="cast-prev-mini" id="cpv_${idx}"></div>`;b.appendChild(r);}
-function castPrev(inp){const v=inp.value.trim(),img=inp.parentElement.querySelector('.cast-prev-mini');if(v){img.src=v;img.style.display='block';}else img.style.display='none';}
+function addCastRow(){
+  const b=document.getElementById('castBuilder'),idx=b.children.length;
+  const r=document.createElement('div');r.className='cast-row-a';r.style.marginBottom='10px';
+  const iS='background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:7px 10px;color:#fff;font-size:12px;outline:none;width:100%;';
+  r.innerHTML=`
+    <input type="text" placeholder="Name..." class="c-name" style="${iS}">
+    <input type="text" placeholder="Role..." class="c-role" style="${iS}">
+    <div style="display:flex;gap:8px;align-items:center;">
+      <div class="img-drop-single" style="width:64px;height:64px;border-radius:50%;flex-shrink:0;min-height:64px;"
+        ondragover="singleDragOver(event,this)" ondragleave="singleDragLeave(this)"
+        ondrop="singleDrop(event,'cast','cphid_${idx}','cprev_${idx}','cprog_${idx}')">
+        <input type="file" accept="image/*" onchange="singleFileSelect(event,'cast','cphid_${idx}','cprev_${idx}','cprog_${idx}')">
+        <div class="drop-hint" style="padding:6px;"><i class="fas fa-user" style="font-size:16px;"></i></div>
+        <div class="preview-wrap circle" id="cprev_${idx}"><img src="" alt=""><button class="rm-single" onclick="removeSingleImg(event,this.closest('.img-drop-single'),'cphid_${idx}','cprev_${idx}')"><i class="fas fa-times"></i></button></div>
+        <div class="img-upload-progress" id="cprog_${idx}"><div class="bar"></div></div>
+      </div>
+      <input type="hidden" class="c-photo" id="cphid_${idx}">
+      <button onclick="this.closest('.cast-row-a').remove()" style="background:rgba(229,9,20,0.1);border:1px solid rgba(229,9,20,0.2);color:var(--red);padding:5px 9px;border-radius:5px;cursor:pointer;font-size:11px;flex-shrink:0;"><i class="fas fa-trash"></i></button>
+    </div>`;
+  b.appendChild(r);
+}
 
 let seasonCount=0;
 function buildSeasons(){
@@ -1328,7 +1390,7 @@ async function submitContent(){
   const type=document.getElementById('cType').value,title=document.getElementById('fTitle').value.trim();
   if(!title){showToast('Title danna!');return;}
   const badges=Object.keys(activeBadges).filter(k=>activeBadges[k]);
-  const cast=[];document.querySelectorAll('#castBuilder .cast-row-a').forEach(row=>{const name=row.querySelector('.c-name')?.value.trim();if(name)cast.push({name,role:row.querySelector('.c-role')?.value.trim()||'',photo:row.querySelector('.c-photo')?.value.trim()||''});});
+  const cast=[];document.querySelectorAll('#castBuilder .cast-row-a').forEach(row=>{const name=row.querySelector('.c-name')?.value.trim();if(name)cast.push({name,role:row.querySelector('.c-role')?.value.trim()||'',photo:row.querySelector('.c-photo')?.value||''});});
   const qimages=addImgData.map(d=>d.url);
   const item={id:Date.now(),type,title,category:document.getElementById('fCat').value,year:parseInt(document.getElementById('fYear').value)||new Date().getFullYear(),rating:parseFloat(document.getElementById('fRating').value)||7.0,duration:document.getElementById('fDuration').value.trim()||'',qtype:document.getElementById('fQtype').value||'WEB',thumb:document.getElementById('fThumb').value.trim()||`https://via.placeholder.com/200x300/1a1a1a/333?text=${encodeURIComponent(title)}`,qimages,desc:document.getElementById('fDesc').value.trim()||'',writer:document.getElementById('fWriter').value.trim()||'',trailer:document.getElementById('fTrailer').value.trim()||'',badges,seasonNum:document.getElementById('fSeasonNum').value.trim(),cast,isAdult:isAdult18};
   if(type==='movie'){
@@ -1352,13 +1414,17 @@ async function submitContent(){
   if(window._fbSave){try{await window._fbSave(item);showToast('"'+title+'" published! 🔥','success');}catch(e){showToast('Failed: '+e.message);return;}}
   else{window.allContent.unshift(item);showToast('"'+title+'" saved!','success');initHome();updateStats();}
   // Reset
-  ['fTitle','fYear','fRating','fDuration','fThumb','fDesc','fWriter','fTrailer','fSeasonNum','d480','d480size','d480lang','d720','d720size','d720lang','d1080','d1080size','d1080lang','dSrt','fSeasons'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['fTitle','fYear','fRating','fDuration','fDesc','fWriter','fTrailer','fSeasonNum','d480','d480size','d480lang','d720','d720size','d720lang','d1080','d1080size','d1080lang','dSrt','fSeasons'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('pThumb').style.display='none';
   document.getElementById('seasonBuilder').innerHTML='';document.getElementById('castBuilder').innerHTML='';
   Object.keys(activeBadges).forEach(k=>activeBadges[k]=false);document.querySelectorAll('.badge-toggle').forEach(b=>b.classList.remove('on'));
   isAdult18=false;document.getElementById('adultToggle').classList.remove('on');
   selectedQType='WEB';document.querySelectorAll('.ql-type-btn').forEach(b=>b.classList.remove('on'));
   addImgData=[];renderImgPreviews();seasonCount=0;
+  // Reset poster drag-drop zone
+  const pz=document.getElementById('posterDropZone');if(pz)pz.classList.remove('has-img');
+  const pp=document.getElementById('posterPreview');if(pp){pp.style.display='none';const pi=pp.querySelector('img');if(pi)pi.src='';}
+  const pt=document.getElementById('fThumb');if(pt)pt.value='';
 }
 function v(id){const el=document.getElementById(id);return el?el.value.trim():'';}
 
@@ -1443,7 +1509,15 @@ function openEdit(id,fbKey){
     ${f('Duration','duration',item.duration,'text','2h 30m')}
     <div class="fg"><label>🏷 Quality Type</label><div class="ql-type-select" id="eQtWrap">${qtHtml}</div><input type="hidden" id="e_qtype" value="${item.qtype||'WEB'}"></div>
     <div class="fg"><label>Content Rating</label><div class="adult-toggle" onclick="toggleEA()" style="margin:0;"><div class="at-left"><span class="at-icon">🔞</span><div class="at-info"><h4>18+ CONTENT</h4><p>Toggle adult rating</p></div></div><div class="toggle-sw ${item.isAdult?'on':''}" id="eAdultToggle"></div></div></div>
-    ${f('Poster URL','thumb',item.thumb,'text','https://...')}
+    \`<div class="fg"><label>🖼 Poster Image</label>
+      <div class="img-drop-single ${item.thumb?'has-img':''}" id="ePosterZone" ondragover="singleDragOver(event,this)" ondragleave="singleDragLeave(this)" ondrop="singleDrop(event,'poster','e_thumb','ePosterPreview','ePosterProg')">
+        <input type="file" accept="image/*" onchange="singleFileSelect(event,'poster','e_thumb','ePosterPreview','ePosterProg')">
+        <div class="drop-hint"><i class="fas fa-image"></i><p>Drag &amp; drop poster or click to browse</p></div>
+        <div class="preview-wrap poster" id="ePosterPreview" style="${item.thumb?'':'display:none'}"><img src="${item.thumb||''}" alt="Poster"><button class="rm-single" onclick="removeSingleImg(event,'ePosterZone','e_thumb','ePosterPreview')"><i class="fas fa-times"></i></button></div>
+        <div class="img-upload-progress" id="ePosterProg"><div class="bar"></div></div>
+      </div>
+      <input type="hidden" id="e_thumb" value="${item.thumb||''}">
+    </div>\`
     ${eImgsHtml}
     ${ta('desc','Description',item.desc)}
     ${f('Writer','writer',item.writer)} ${f('Trailer URL','trailer',item.trailer)}
@@ -1554,6 +1628,113 @@ async function saveEdit(){
   else{const idx=window.allContent.findIndex(c=>String(c.id)===String(editingItem.id));if(idx>=0)window.allContent[idx]={...updated,fbKey:editingItem.fbKey};showToast('Saved!','success');initHome();updateStats();renderManageList();}
   _editSeasonCount=0;
   closeEditModal();
+}
+
+/* ============================================================
+   UNIVERSAL DRAG-DROP IMAGE UPLOAD SYSTEM
+   - singleDragOver / singleDragLeave / singleDrop
+   - singleFileSelect
+   - removeSingleImg
+   - uploadImgToFirebase (returns URL)
+   Works for: Poster, Cast photo, Quality images, Edit poster
+   ============================================================ */
+
+async function uploadImgToFirebase(file, path, progressId) {
+  if (!window._uploadFile) {
+    // Fallback: return base64 if no Firebase Storage
+    return new Promise((res) => {
+      const reader = new FileReader();
+      reader.onload = ev => res(ev.target.result);
+      reader.readAsDataURL(file);
+    });
+  }
+  const progEl = progressId ? document.getElementById(progressId) : null;
+  const bar = progEl ? progEl.querySelector('.bar') : null;
+  if (progEl) progEl.classList.add('show');
+  try {
+    const url = await window._uploadFile(file, path, pct => {
+      if (bar) bar.style.width = pct + '%';
+    });
+    if (progEl) { bar.style.width = '100%'; setTimeout(() => progEl.classList.remove('show'), 600); }
+    return url;
+  } catch (e) {
+    if (progEl) progEl.classList.remove('show');
+    showToast('Upload failed, using local preview', 'info');
+    // Fallback to base64
+    return new Promise((res) => {
+      const reader = new FileReader();
+      reader.onload = ev => res(ev.target.result);
+      reader.readAsDataURL(file);
+    });
+  }
+}
+
+function singleDragOver(e, zone) {
+  e.preventDefault();
+  zone.classList.add('drag-over');
+}
+function singleDragLeave(zone) {
+  zone.classList.remove('drag-over');
+}
+async function singleDrop(e, type, hiddenId, previewId, progressId) {
+  e.preventDefault();
+  const zone = e.currentTarget;
+  zone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (!file || !file.type.startsWith('image/')) return;
+  await processSingleFile(file, type, hiddenId, previewId, progressId, zone);
+}
+async function singleFileSelect(e, type, hiddenId, previewId, progressId) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const zone = e.target.closest('.img-drop-single');
+  await processSingleFile(file, type, hiddenId, previewId, progressId, zone);
+}
+async function processSingleFile(file, type, hiddenId, previewId, progressId, zone) {
+  const path = `streamx/${type}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g,'_')}`;
+  const url = await uploadImgToFirebase(file, path, progressId);
+  // Set hidden input
+  const hidden = document.getElementById(hiddenId);
+  if (hidden) hidden.value = url;
+  // Show preview
+  const prevWrap = document.getElementById(previewId);
+  if (prevWrap) {
+    const img = prevWrap.querySelector('img');
+    if (img) img.src = url;
+    prevWrap.style.display = 'block';
+  }
+  if (zone) zone.classList.add('has-img');
+  showToast('Image uploaded! ✅', 'success');
+}
+function removeSingleImg(e, zoneOrId, hiddenId, previewId) {
+  e.preventDefault();
+  e.stopPropagation();
+  const zone = typeof zoneOrId === 'string' ? document.getElementById(zoneOrId) : zoneOrId;
+  if (zone) zone.classList.remove('has-img');
+  const hidden = document.getElementById(hiddenId);
+  if (hidden) hidden.value = '';
+  const prevWrap = document.getElementById(previewId);
+  if (prevWrap) { prevWrap.style.display = 'none'; const img = prevWrap.querySelector('img'); if (img) img.src = ''; }
+}
+
+// Quality images carousel upload — also Firebase
+async function onDrop(e) {
+  e.preventDefault();
+  document.getElementById('imgDropZone').classList.remove('drag-over');
+  const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+  for (const f of files) await processQualityImg(f);
+}
+async function onFileSelect(e) {
+  for (const f of Array.from(e.target.files)) await processQualityImg(f);
+}
+async function processQualityImg(file) {
+  if (addImgData.length >= 5) { showToast('Max 5 images'); return; }
+  const path = `streamx/gallery/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g,'_')}`;
+  showToast('Uploading image...', 'info');
+  const url = await uploadImgToFirebase(file, path, null);
+  addImgData.push({ url, isBase64: url.startsWith('data:') });
+  renderImgPreviews();
+  showToast('Image added! ✅', 'success');
 }
 </script>
 </body>
