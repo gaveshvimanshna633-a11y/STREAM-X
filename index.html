@@ -875,6 +875,7 @@ body{font-family:'Poppins',sans-serif;background:var(--black);color:var(--light)
               <div class="ql-type-btn hdrip" onclick="setQType(this,'HDRIP')">HDRIP</div>
               <div class="ql-type-btn bluray" onclick="setQType(this,'BLURAY')">BLURAY</div>
               <div class="ql-type-btn cam" onclick="setQType(this,'CAM')">CAM</div>
+              <div class="ql-type-btn sinhaladub" onclick="setQType(this,'SINHALADUB')">SINHALADUB</div>
             </div>
             <input type="hidden" id="fQtype" value="WEB">
           </div>
@@ -1135,7 +1136,7 @@ function heroNav(dir){const t=document.querySelectorAll('.hero-slide').length;he
 
 function renderTop10(){
   const items=(window.allContent||[]).filter(c=>!c.isAdult).slice(0,10);
-  const ql={WEB:'web',HDRIP:'hdrip',BLURAY:'bluray',CAM:'cam'};
+  const ql={WEB:'web',HDRIP:'hdrip',BLURAY:'bluray',CAM:'cam',SINHALADUB:'sinhaladub'};
   document.getElementById('top10Row').innerHTML=items.map((item,i)=>`
     <div class="movie-card" onclick="openDetail('${item.id||item.fbKey}')">
       <div class="card-thumb">
@@ -1488,7 +1489,7 @@ function openEdit(id,fbKey){
   const f=(lbl,eid,val,type='text',ph='')=>`<div class="fg"><label>${lbl}</label><input type="${type}" id="e_${eid}" value="${(val||'').toString().replace(/"/g,'&quot;')}" placeholder="${ph}"></div>`;
   const ta=(eid,lbl,val)=>`<div class="fg"><label>${lbl}</label><textarea id="e_${eid}" style="min-height:70px;">${val||''}</textarea></div>`;
   const bdgHtml=Object.keys(BADGE_CFG).map(k=>{const cfg=BADGE_CFG[k],on=badges.includes(k);return`<div class="badge-toggle bt-${k.replace(/\W/g,'')} ${on?'on':''}" id="ebtg_${k}">${cfg.icon} ${cfg.label}</div>`;}).join('');
-  const qtypes=['WEB','HDRIP','BLURAY','CAM'];
+  const qtypes=['WEB','HDRIP','BLURAY','CAM','SINHALADUB'];
   const qtHtml=qtypes.map(q=>`<div class="ql-type-btn ${q.toLowerCase()} ${item.qtype===q?'on':''}" onclick="setEQt(this,'${q}')">${q}</div>`).join('');
 
   // For downloads
