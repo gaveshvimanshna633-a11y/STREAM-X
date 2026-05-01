@@ -53,6 +53,42 @@
   window._fbSave=async(item)=>{const r=push(ref(db,'content'));await set(r,item);return r.key;};
   window._fbDelete=async(k)=>{await remove(ref(db,'content/'+k));};
   window._fbUpdate=async(k,item)=>{await update(ref(db,'content/'+k),item);};
+
+  // ===== ANALYTICS =====
+  const todayKey=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
+
+  // Track visitor (once per session)
+  const vsKey='sx_visited_'+todayKey();
+  if(!sessionStorage.getItem(vsKey)){
+    sessionStorage.setItem(vsKey,'1');
+    const dk=todayKey();
+    // today visitors
+    const tvRef=ref(db,'analytics/visitors/'+dk);
+    onValue(tvRef,(s)=>{set(tvRef,(s.val()||0)+1);},{onlyOnce:true});
+    // all time visitors
+    const avRef=ref(db,'analytics/allVisitors');
+    onValue(avRef,(s)=>{set(avRef,(s.val()||0)+1);},{onlyOnce:true});
+  }
+
+  // Track download click
+  window._trackDownload=async()=>{
+    const dk=todayKey();
+    const tdRef=ref(db,'analytics/downloads/'+dk);
+    onValue(tdRef,(s)=>{set(tdRef,(s.val()||0)+1);},{onlyOnce:true});
+    const adRef=ref(db,'analytics/allDownloads');
+    onValue(adRef,(s)=>{set(adRef,(s.val()||0)+1);},{onlyOnce:true});
+  };
+
+  // Listen analytics for admin
+  window._listenAnalytics=(cb)=>{
+    const dk=todayKey();
+    let data={todayVisitors:0,allVisitors:0,todayDownloads:0,allDownloads:0};
+    const merge=(k,v)=>{data={...data,[k]:v||0};cb({...data});};
+    onValue(ref(db,'analytics/visitors/'+dk),(s)=>merge('todayVisitors',s.val()));
+    onValue(ref(db,'analytics/allVisitors'),(s)=>merge('allVisitors',s.val()));
+    onValue(ref(db,'analytics/downloads/'+dk),(s)=>merge('todayDownloads',s.val()));
+    onValue(ref(db,'analytics/allDownloads'),(s)=>merge('allDownloads',s.val()));
+  };
 </script>
 <style>
 :root{
@@ -482,6 +518,34 @@ body{font-family:'Poppins',sans-serif;background:var(--black);color:var(--light)
 .stat-c{background:var(--dark2);border:1px solid rgba(255,255,255,0.05);border-radius:9px;padding:16px;text-align:center;}
 .stat-c .sn{font-family:'Bebas Neue',cursive;font-size:36px;color:var(--red);line-height:1;}
 .stat-c .sl{font-size:10px;color:var(--gray);letter-spacing:2px;font-family:'Rajdhani',sans-serif;text-transform:uppercase;}
+/* Analytics */
+.analytics-section{margin-bottom:22px;}
+.analytics-title{font-family:'Bebas Neue',cursive;font-size:16px;letter-spacing:3px;color:rgba(255,255,255,0.55);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.analytics-title span{width:22px;height:2px;background:var(--blue);display:inline-block;border-radius:2px;}
+.analytics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.an-card{border-radius:11px;padding:15px 14px;display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.06);}
+.an-card::before{content:'';position:absolute;top:-18px;right:-18px;width:64px;height:64px;border-radius:50%;opacity:0.12;}
+.an-card.tv .an-icon,.an-card.tv::before{background:var(--blue);}
+.an-card.av .an-icon,.an-card.av::before{background:var(--green);}
+.an-card.td .an-icon,.an-card.td::before{background:var(--orange);}
+.an-card.ad .an-icon,.an-card.ad::before{background:var(--purple);}
+.an-card.tv{background:linear-gradient(135deg,rgba(59,130,246,0.1),rgba(59,130,246,0.03));}
+.an-card.av{background:linear-gradient(135deg,rgba(34,197,94,0.1),rgba(34,197,94,0.03));}
+.an-card.td{background:linear-gradient(135deg,rgba(255,140,0,0.1),rgba(255,140,0,0.03));}
+.an-card.ad{background:linear-gradient(135deg,rgba(168,85,247,0.1),rgba(168,85,247,0.03));}
+.an-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:2px;}
+.an-card.tv .an-icon{background:rgba(59,130,246,0.2);color:var(--blue);}
+.an-card.av .an-icon{background:rgba(34,197,94,0.2);color:var(--green);}
+.an-card.td .an-icon{background:rgba(255,140,0,0.2);color:var(--orange);}
+.an-card.ad .an-icon{background:rgba(168,85,247,0.2);color:var(--purple);}
+.an-num{font-family:'Bebas Neue',cursive;font-size:34px;line-height:1;}
+.an-card.tv .an-num{color:var(--blue);}
+.an-card.av .an-num{color:var(--green);}
+.an-card.td .an-num{color:var(--orange);}
+.an-card.ad .an-num{color:var(--purple);}
+.an-label{font-size:9px;color:rgba(255,255,255,0.38);letter-spacing:2px;font-family:'Rajdhani',sans-serif;text-transform:uppercase;}
+.an-sub{font-size:10px;color:rgba(255,255,255,0.22);font-family:'Rajdhani',sans-serif;margin-top:1px;}
+@media(max-width:700px){.analytics-grid{grid-template-columns:repeat(2,1fr);}}
 .edit-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:8000;overflow-y:auto;padding:50px 20px 40px;}
 .edit-modal.open{display:block;}
 .edit-modal-inner{max-width:860px;margin:0 auto;background:var(--dark2);border:1px solid rgba(229,9,20,0.18);border-radius:14px;padding:26px;}
@@ -847,6 +911,37 @@ body{font-family:'Poppins',sans-serif;background:var(--black);color:var(--light)
         <div class="stat-c"><div class="sn" id="sTV">0</div><div class="sl">TV Series</div></div>
         <div class="stat-c"><div class="sn" id="sTotal">0</div><div class="sl">Total</div></div>
         <div class="stat-c"><div class="sn" id="s18" style="color:#ff4466;">0</div><div class="sl">18+ Content</div></div>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div class="analytics-section">
+        <div class="analytics-title"><span></span>📊 ANALYTICS — FIREBASE LIVE</div>
+        <div class="analytics-grid">
+          <div class="an-card tv">
+            <div class="an-icon"><i class="fas fa-eye"></i></div>
+            <div class="an-num" id="anTodayV">—</div>
+            <div class="an-label">Today Visitors</div>
+            <div class="an-sub" id="anTodayDate">Today</div>
+          </div>
+          <div class="an-card av">
+            <div class="an-icon"><i class="fas fa-users"></i></div>
+            <div class="an-num" id="anAllV">—</div>
+            <div class="an-label">All Visitors</div>
+            <div class="an-sub">Total visits</div>
+          </div>
+          <div class="an-card td">
+            <div class="an-icon"><i class="fas fa-download"></i></div>
+            <div class="an-num" id="anTodayD">—</div>
+            <div class="an-label">Today Downloads</div>
+            <div class="an-sub" id="anTodayDDate">Today</div>
+          </div>
+          <div class="an-card ad">
+            <div class="an-icon"><i class="fas fa-chart-bar"></i></div>
+            <div class="an-num" id="anAllD">—</div>
+            <div class="an-label">All Downloads</div>
+            <div class="an-sub">Total downloads</div>
+          </div>
+        </div>
       </div>
       <div class="admin-tabs">
         <div class="admin-tab active" id="tabAdd" onclick="switchTab('add')">ADD CONTENT</div>
@@ -1251,7 +1346,7 @@ function renderDetail(){
   if(c.type==='movie'&&(validDls.length||c.srt)){
     dlSec.style.display='block';
     let html=validDls.map(d=>`
-      <a href="${d.link}" target="_blank" class="dl-item" download>
+      <a href="${d.link}" target="_blank" class="dl-item" download onclick="if(window._trackDownload)window._trackDownload();">
         <div class="dl-icon"><i class="fas fa-download"></i></div>
         <div class="dl-info">
           <h4>Direct &amp; Telegram Download Links</h4>
@@ -1259,7 +1354,7 @@ function renderDetail(){
         </div>
         <i class="fas fa-chevron-right dl-arrow"></i>
       </a>`).join('');
-    if(c.srt&&c.srt.trim())html+=`<a href="${c.srt}" target="_blank" class="dl-item srt-item" download><div class="dl-icon"><i class="fas fa-closed-captioning"></i></div><div class="dl-info"><h4>🇱🇰 Sinhala Subtitle</h4><p>SRT file<span class="dot"></span>Download &amp; load in player</p></div><i class="fas fa-chevron-right dl-arrow"></i></a>`;
+    if(c.srt&&c.srt.trim())html+=`<a href="${c.srt}" target="_blank" class="dl-item srt-item" download onclick="if(window._trackDownload)window._trackDownload();"><div class="dl-icon"><i class="fas fa-closed-captioning"></i></div><div class="dl-info"><h4>🇱🇰 Sinhala Subtitle</h4><p>SRT file<span class="dot"></span>Download &amp; load in player</p></div><i class="fas fa-chevron-right dl-arrow"></i></a>`;
     dlList.innerHTML=html||'<div style="color:var(--gray);font-size:12px;padding:10px;">No download links yet.</div>';
   } else dlSec.style.display='none';
 
@@ -1288,7 +1383,7 @@ function showEps(season){
     return `<div class="ep-card">
       <div class="ep-head"><div class="ep-n">E${ep.ep}</div><div><div class="ep-t">${ep.title||'Episode '+ep.ep}</div><div class="ep-d">${ep.desc||''}</div></div></div>
       <div class="ep-acts">
-        ${hasDl?`<a href="${ep.dlLink}" target="_blank" class="ep-dl" download>
+        ${hasDl?`<a href="${ep.dlLink}" target="_blank" class="ep-dl" download onclick="if(window._trackDownload)window._trackDownload();">
           <div class="ep-dl-icon"><i class="fas fa-download"></i></div>
           <div class="ep-dl-info"><h5>Download Episode</h5><p>${ep.dlSize||''}${ep.dlSize?' · ':''}E${ep.ep}</p></div>
         </a>`:''}
@@ -1379,7 +1474,24 @@ function removeImg(i){addImgData.splice(i,1);renderImgPreviews();}
 function initAdmin(){if(adminLoggedIn)showDash();else{document.getElementById('adminLogin').style.display='block';document.getElementById('adminDash').classList.remove('visible');}}
 function doLogin(){if(document.getElementById('adminPw').value==='gavesh5'){adminLoggedIn=true;document.getElementById('adminLogin').style.display='none';showDash();showToast('Welcome! 🔥','success');}else{showToast('Wrong password!');document.getElementById('adminPw').style.borderColor='var(--red)';setTimeout(()=>document.getElementById('adminPw').style.borderColor='',1500);}}
 function doLogout(){adminLoggedIn=false;showPage('home');}
-function showDash(){document.getElementById('adminDash').classList.add('visible');updateStats();renderManageList();}
+function showDash(){
+  document.getElementById('adminDash').classList.add('visible');
+  updateStats();renderManageList();
+  // Set today date labels
+  const dk=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const el1=document.getElementById('anTodayDate'),el2=document.getElementById('anTodayDDate');
+  if(el1)el1.textContent=dk;if(el2)el2.textContent=dk;
+  // Start analytics listener
+  if(window._listenAnalytics){
+    window._listenAnalytics((d)=>{
+      const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v>=1000?(v/1000).toFixed(1)+'K':v;};
+      set('anTodayV',d.todayVisitors);
+      set('anAllV',d.allVisitors);
+      set('anTodayD',d.todayDownloads);
+      set('anAllD',d.allDownloads);
+    });
+  }
+}
 function updateStats(){const m=(window.allContent||[]).filter(c=>c.type==='movie').length,t=(window.allContent||[]).filter(c=>c.type==='tvseries').length,a=(window.allContent||[]).filter(c=>c.isAdult).length;document.getElementById('sMovies').textContent=m;document.getElementById('sTV').textContent=t;document.getElementById('sTotal').textContent=m+t;document.getElementById('s18').textContent=a;}
 function switchTab(tab){document.getElementById('tabAdd').classList.toggle('active',tab==='add');document.getElementById('tabManage').classList.toggle('active',tab==='manage');document.getElementById('addTab').style.display=tab==='add'?'block':'none';document.getElementById('manageTab').style.display=tab==='manage'?'block':'none';if(tab==='manage')renderManageList();}
 function toggleType(){const t=document.getElementById('cType').value;document.getElementById('movieFields').style.display=t==='movie'?'block':'none';document.getElementById('tvFields').style.display=t==='tvseries'?'block':'none';}
