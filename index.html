@@ -54,6 +54,17 @@
   window._fbDelete=async(k)=>{await remove(ref(db,'content/'+k));};
   window._fbUpdate=async(k,item)=>{await update(ref(db,'content/'+k),item);};
 
+  // ===== COLLECTIONS =====
+  window._fbSaveCollection=async(col)=>{const r=push(ref(db,'collections'));await set(r,col);return r.key;};
+  window._fbUpdateCollection=async(k,col)=>{await update(ref(db,'collections/'+k),col);};
+  window._fbDeleteCollection=async(k)=>{await remove(ref(db,'collections/'+k));};
+  window._listenCollections=(cb)=>{
+    onValue(ref(db,'collections'),(snap)=>{
+      const d=snap.val();
+      cb(d?Object.entries(d).map(([k,v])=>({...v,fbKey:k})).sort((a,b)=>(a.order||0)-(b.order||0)):[]);
+    });
+  };
+
   // ===== MOVIE REQUESTS =====
   window._fbSaveRequest=async(req)=>{const r=push(ref(db,'requests'));await set(r,req);return r.key;};
   window._fbReplyRequest=async(k,reply)=>{await update(ref(db,'requests/'+k),{reply,repliedAt:Date.now(),status:'replied'});};
@@ -607,6 +618,68 @@ body{font-family:'Poppins',sans-serif;background:var(--black);color:var(--light)
 /* WATERMARK */
 .streamx-watermark{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:9990;pointer-events:none;display:flex;align-items:center;gap:7px;background:rgba(10,10,10,0.72);border:1px solid rgba(229,9,20,0.22);border-radius:20px;padding:5px 14px;backdrop-filter:blur(8px);}
 .streamx-watermark span{font-family:'Bebas Neue',cursive;font-size:13px;letter-spacing:3px;color:rgba(255,255,255,0.4);}
+
+/* ===== COLLECTION TIMELINE (Home page section) ===== */
+.col-section{padding:0 28px 28px;}
+.col-timeline-wrap{position:relative;}
+.col-timeline{display:flex;gap:14px;overflow-x:auto;padding:8px 0 16px;scroll-behavior:smooth;scrollbar-width:none;}
+.col-timeline::-webkit-scrollbar{display:none;}
+.col-card{flex:0 0 200px;background:var(--dark2);border:1px solid rgba(255,255,255,0.07);border-radius:14px;overflow:hidden;cursor:pointer;transition:all 0.25s;position:relative;}
+.col-card:hover{border-color:rgba(229,9,20,0.45);transform:translateY(-4px);box-shadow:0 12px 36px rgba(229,9,20,0.2);}
+.col-card-bg{width:100%;height:110px;object-fit:cover;display:block;filter:brightness(0.6);}
+.col-card-body{padding:12px;}
+.col-card-icon{font-size:11px;font-family:'Bebas Neue',cursive;letter-spacing:2px;color:var(--red);margin-bottom:4px;display:flex;align-items:center;gap:5px;}
+.col-card-name{font-family:'Bebas Neue',cursive;font-size:17px;letter-spacing:2px;color:#fff;line-height:1.2;margin-bottom:6px;}
+.col-card-meta{font-size:10px;color:var(--gray);font-family:'Rajdhani',sans-serif;display:flex;align-items:center;gap:6px;}
+.col-part-count{background:rgba(229,9,20,0.12);border:1px solid rgba(229,9,20,0.25);color:var(--red);font-size:9px;font-family:'Rajdhani',sans-serif;font-weight:700;padding:2px 8px;border-radius:4px;margin-top:5px;display:inline-block;}
+.col-scroll-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(229,9,20,0.85);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:11px;z-index:10;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.col-scroll-btn:hover{background:var(--red);transform:translateY(-50%) scale(1.1);}
+.col-scroll-btn.left{left:-6px;}
+.col-scroll-btn.right{right:-6px;}
+
+/* ===== COLLECTION DETAIL TIMELINE (detail page) ===== */
+.dt-collection-section{margin:22px 0;}
+.dt-col-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.dt-col-title{font-family:'Bebas Neue',cursive;font-size:18px;letter-spacing:3px;color:#fff;}
+.dt-col-title span{color:var(--red);}
+.dt-col-badge{background:rgba(229,9,20,0.12);border:1px solid rgba(229,9,20,0.3);color:var(--red);font-size:10px;font-family:'Rajdhani',sans-serif;font-weight:700;padding:3px 10px;border-radius:4px;letter-spacing:1px;}
+.dt-col-timeline{display:flex;gap:12px;overflow-x:auto;padding:4px 0 14px;scroll-behavior:smooth;scrollbar-width:none;}
+.dt-col-timeline::-webkit-scrollbar{display:none;}
+.dt-col-movie-card{flex:0 0 130px;cursor:pointer;transition:all 0.22s;position:relative;}
+.dt-col-movie-card:hover .dtcm-img{border-color:rgba(229,9,20,0.7);transform:scale(1.04);}
+.dtcm-img{width:130px;height:185px;object-fit:cover;border-radius:10px;border:2px solid rgba(255,255,255,0.08);transition:all 0.22s;display:block;}
+.dtcm-info{padding:7px 2px 0;}
+.dtcm-num{font-family:'Bebas Neue',cursive;font-size:11px;letter-spacing:1px;color:var(--red);margin-bottom:2px;}
+.dtcm-title{font-size:11px;color:rgba(255,255,255,0.8);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dtcm-year{font-size:10px;color:var(--gray);}
+.dtcm-rating{font-size:10px;color:var(--gold);display:flex;align-items:center;gap:3px;margin-top:2px;}
+.dtcm-current{position:absolute;top:6px;left:6px;background:var(--red);color:#fff;font-size:9px;font-family:'Rajdhani',sans-serif;font-weight:700;padding:2px 7px;border-radius:3px;letter-spacing:1px;}
+.dtcm-img-wrap{position:relative;}
+
+/* ===== ADMIN COLLECTION TAB ===== */
+.col-admin-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px;margin-bottom:12px;}
+.col-admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.col-admin-name{font-family:'Bebas Neue',cursive;font-size:17px;letter-spacing:2px;color:#fff;}
+.col-admin-actions{display:flex;gap:6px;}
+.col-movie-row{display:flex;gap:8px;align-items:center;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:8px 10px;margin-bottom:6px;}
+.col-movie-row img{width:32px;height:46px;object-fit:cover;border-radius:4px;flex-shrink:0;}
+.col-movie-row-info{flex:1;min-width:0;}
+.col-movie-row-title{font-size:12px;color:#fff;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.col-movie-row-year{font-size:10px;color:var(--gray);}
+.col-movie-row-part{font-size:10px;color:var(--red);font-family:'Rajdhani',sans-serif;font-weight:700;}
+.col-form-card{background:var(--dark2);border:1px solid rgba(229,9,20,0.15);border-radius:14px;padding:22px;margin-bottom:18px;}
+.col-form-card h3{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,0.45);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.col-movie-search-result{display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:8px;cursor:pointer;transition:all 0.2s;margin-bottom:5px;}
+.col-movie-search-result:hover{border-color:rgba(229,9,20,0.35);background:rgba(229,9,20,0.06);}
+.col-movie-search-result img{width:28px;height:40px;object-fit:cover;border-radius:4px;}
+.col-movie-search-result span{font-size:12px;color:#fff;font-weight:600;}
+.col-movie-search-result small{font-size:10px;color:var(--gray);display:block;}
+.col-selected-movies{display:flex;gap:10px;flex-wrap:wrap;min-height:50px;padding:10px;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.1);border-radius:8px;margin-bottom:10px;}
+.col-sel-chip{display:flex;align-items:center;gap:6px;background:rgba(229,9,20,0.1);border:1px solid rgba(229,9,20,0.25);border-radius:6px;padding:5px 10px;}
+.col-sel-chip span{font-size:11px;color:#fff;font-family:'Rajdhani',sans-serif;font-weight:600;}
+.col-sel-chip button{background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer;font-size:10px;padding:0;line-height:1;}
+.col-sel-chip button:hover{color:var(--red);}
+.col-part-badge{font-size:9px;color:var(--red);font-family:'Rajdhani',sans-serif;font-weight:700;}
 .streamx-watermark strong{font-family:'Bebas Neue',cursive;font-size:13px;letter-spacing:3px;color:var(--red);}
 
 /* REQUEST ZONE */
@@ -783,6 +856,22 @@ body{font-family:'Poppins',sans-serif;background:var(--black);color:var(--light)
       </div>
       <div class="scroll-row" id="top10Row"></div>
     </div>
+
+    <!-- COLLECTION TIMELINE SECTION -->
+    <div id="collectionSection" style="display:none;">
+      <div class="sec-wrap" style="padding-bottom:0;">
+        <div class="sec-hdr">
+          <div class="sec-title"><div class="sec-line"></div><span>🎬 MOVIE <span class="accent">COLLECTIONS</span></span></div>
+        </div>
+      </div>
+      <div class="col-section">
+        <div class="col-timeline-wrap">
+          <button class="col-scroll-btn left" onclick="scrollColTimeline(-1)"><i class="fas fa-chevron-left"></i></button>
+          <div class="col-timeline" id="colTimeline"></div>
+          <button class="col-scroll-btn right" onclick="scrollColTimeline(1)"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+    </div>
     <div class="sec-wrap">
       <div class="cat-scroll" id="catScroll"></div>
       <div class="sec-hdr">
@@ -921,6 +1010,17 @@ body{font-family:'Poppins',sans-serif;background:var(--black);color:var(--light)
           <div class="cast-row" id="castRow"></div>
         </div>
       </div>
+      <!-- COLLECTION TIMELINE in detail page -->
+      <div id="dtCollectionSection" style="display:none;">
+        <div class="dt-collection-section">
+          <div class="dt-col-header">
+            <div class="sec-line"></div>
+            <div class="dt-col-title" id="dtColTitle">COLLECTION</div>
+            <div class="dt-col-badge" id="dtColBadge">0 PARTS</div>
+          </div>
+          <div class="dt-col-timeline" id="dtColTimeline"></div>
+        </div>
+      </div>
       <!-- Episodes (download only) -->
       <div id="epSection" style="display:none;">
         <div class="ep-wrap">
@@ -1037,6 +1137,7 @@ body{font-family:'Poppins',sans-serif;background:var(--black);color:var(--light)
         <div class="admin-tab active" id="tabAdd" onclick="switchTab('add')">ADD CONTENT</div>
         <div class="admin-tab" id="tabManage" onclick="switchTab('manage')">MANAGE</div>
         <div class="admin-tab" id="tabRequests" onclick="switchTab('requests')" style="border-color:rgba(34,197,94,0.3);color:var(--green);">REQUESTS <span id="reqCount" style="background:var(--green);color:#000;font-size:9px;padding:1px 6px;border-radius:3px;margin-left:4px;font-weight:700;display:none;">0</span></div>
+        <div class="admin-tab" id="tabCollections" onclick="switchTab('collections')" style="border-color:rgba(59,130,246,0.3);color:var(--blue);">📦 COLLECTIONS</div>
       </div>
 
       <div id="addTab">
@@ -1182,6 +1283,36 @@ body{font-family:'Poppins',sans-serif;background:var(--black);color:var(--light)
           <div id="adminRequestList"><div style="color:var(--gray);font-size:12px;padding:16px;text-align:center;">Loading requests...</div></div>
         </div>
       </div>
+
+      <!-- ADMIN COLLECTIONS TAB -->
+      <div id="collectionsTab" style="display:none;">
+        <!-- Create new collection form -->
+        <div class="col-form-card">
+          <h3><i class="fas fa-plus-circle" style="color:var(--blue);"></i> CREATE / EDIT COLLECTION</h3>
+          <input type="hidden" id="colEditKey" value="">
+          <div class="fg"><label>📦 Collection Name</label><input type="text" id="colName" placeholder="e.g. Harry Potter Collection, Marvel Universe..."></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="fg"><label>🖼 Cover Image URL</label><input type="text" id="colCover" placeholder="https://..." oninput="liveColPreview()"><img id="colCoverPrev" style="max-height:70px;border-radius:6px;margin-top:7px;display:none;"></div>
+            <div class="fg"><label>🔢 Display Order</label><input type="number" id="colOrder" placeholder="1" value="1"></div>
+          </div>
+          <div class="fg">
+            <label>🎬 Search & Add Movies to Collection</label>
+            <input type="text" id="colMovieSearch" placeholder="Movie name type කරන්න..." oninput="searchColMovies(this.value)" style="margin-bottom:8px;">
+            <div id="colMovieSearchResults"></div>
+          </div>
+          <div class="fg">
+            <label>📋 Selected Movies (drag to reorder)</label>
+            <div class="col-selected-movies" id="colSelectedMovies"><div style="color:rgba(255,255,255,0.2);font-size:11px;padding:8px;">Movies add කරන්න above search use කරන්න...</div></div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:6px;">
+            <button class="btn-primary" onclick="saveCollection()" style="flex:1;"><i class="fas fa-save"></i> SAVE COLLECTION</button>
+            <button onclick="resetColForm()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--gray);padding:11px 18px;border-radius:9px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;">RESET</button>
+          </div>
+        </div>
+        <!-- Existing collections -->
+        <div style="font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,0.3);margin-bottom:12px;">EXISTING COLLECTIONS</div>
+        <div id="adminCollectionList"><div style="color:var(--gray);font-size:12px;padding:16px;text-align:center;">No collections yet.</div></div>
+      </div>
     </div>
   </div>
 </main>
@@ -1285,7 +1416,7 @@ if(Notification.permission==='default')Notification.requestPermission();
 document.addEventListener('click',e=>{if(!e.target.closest('#notifBell')&&!e.target.closest('#notifPopup'))document.getElementById('notifPopup').classList.remove('show');});
 
 /* ===== FIREBASE INIT ===== */
-function waitFB(){if(window._fbReady){if(!window.allContent.length)window.allContent=demoData;window._appReady=true;initHome();}else setTimeout(waitFB,200);}
+function waitFB(){if(window._fbReady){if(!window.allContent.length)window.allContent=demoData;window._appReady=true;initHome();initCollections();}else setTimeout(waitFB,200);}
 setTimeout(()=>{if(!window._appReady){window.allContent=demoData;window._appReady=true;document.getElementById('fbStatusText').textContent='Offline Mode';hideLoading();initHome();}},5000);
 waitFB();
 
@@ -1478,6 +1609,9 @@ function renderDetail(){
   if(c.cast&&c.cast.length){castSec.style.display='block';castRow.innerHTML=c.cast.map(a=>`<div class="cast-item"><img class="cast-img" src="${a.photo||''}" alt="${a.name}" onerror="this.src='https://via.placeholder.com/68x68/1a1a1a/333?text=?'"><div class="cast-name">${a.name}</div><div class="cast-role">${a.role||''}</div></div>`).join('');}
   else castSec.style.display='none';
 
+  // Collection timeline
+  renderDetailCollection(c);
+
   // Episodes
   const epSec=document.getElementById('epSection');
   if(c.type==='tvseries'&&c.seasons&&c.seasons.length){epSec.style.display='block';renderSeasons(c.seasons);}
@@ -1621,11 +1755,14 @@ function switchTab(tab){
   document.getElementById('tabAdd').classList.toggle('active',tab==='add');
   document.getElementById('tabManage').classList.toggle('active',tab==='manage');
   document.getElementById('tabRequests').classList.toggle('active',tab==='requests');
+  document.getElementById('tabCollections').classList.toggle('active',tab==='collections');
   document.getElementById('addTab').style.display=tab==='add'?'block':'none';
   document.getElementById('manageTab').style.display=tab==='manage'?'block':'none';
   document.getElementById('requestsTab').style.display=tab==='requests'?'block':'none';
+  document.getElementById('collectionsTab').style.display=tab==='collections'?'block':'none';
   if(tab==='manage')renderManageList();
   if(tab==='requests')loadAdminRequests();
+  if(tab==='collections')loadAdminCollections();
 }
 function toggleType(){const t=document.getElementById('cType').value;document.getElementById('movieFields').style.display=t==='movie'?'block':'none';document.getElementById('tvFields').style.display=t==='tvseries'?'block':'none';}
 function toggle18(){isAdult18=!isAdult18;document.getElementById('adultToggle').classList.toggle('on',isAdult18);}
@@ -2020,7 +2157,252 @@ async function deleteAdminReq(fbKey){
     try{await window._fbDeleteRequest(fbKey);showToast('Deleted!','success');}catch(e){showToast('Failed: '+e.message);}
   }
 }
+/* ===== COLLECTIONS ===== */
+let allCollections=[];
+let colSelectedMovies=[]; // [{fbKey,title,thumb,year,rating,part}]
+let colEditingKey='';
+
+// Listen & render on home
+function initCollections(){
+  if(!window._listenCollections)return;
+  window._listenCollections((cols)=>{
+    allCollections=cols;
+    renderHomeCollections();
+  });
+}
+
+function renderHomeCollections(){
+  const sec=document.getElementById('collectionSection');
+  const tl=document.getElementById('colTimeline');
+  if(!allCollections.length){if(sec)sec.style.display='none';return;}
+  if(sec)sec.style.display='block';
+  tl.innerHTML=allCollections.map(col=>{
+    const parts=col.movies?col.movies.length:0;
+    return`<div class="col-card" onclick="openCollectionDetail('${col.fbKey}')">
+      <img class="col-card-bg" src="${col.cover||'https://via.placeholder.com/400x220/1a1a1a/333?text=Collection'}" alt="${col.name}" onerror="this.src='https://via.placeholder.com/400x220/1a1a1a/333?text=Collection'">
+      <div class="col-card-body">
+        <div class="col-card-icon"><i class="fas fa-film-strip" style="font-size:9px;"></i> COLLECTION</div>
+        <div class="col-card-name">${col.name||'Untitled'}</div>
+        <div class="col-card-meta"><i class="fas fa-layer-group" style="font-size:9px;"></i> ${parts} parts</div>
+        <div class="col-part-count">${parts} FILMS</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function scrollColTimeline(dir){
+  const tl=document.getElementById('colTimeline');
+  if(tl)tl.scrollBy({left:dir*220,behavior:'smooth'});
+}
+
+// Open collection — show its movies in a modal or section
+function openCollectionDetail(fbKey){
+  const col=allCollections.find(c=>c.fbKey===fbKey);
+  if(!col)return;
+  // Show as a detail listing overlay
+  showColModal(col);
+}
+
+let colModalEl=null;
+function showColModal(col){
+  if(colModalEl)colModalEl.remove();
+  const movies=col.movies||[];
+  const moviesHtml=movies.map((m,i)=>{
+    const item=(window.allContent||[]).find(c=>c.fbKey===m.fbKey||String(c.id)===String(m.fbKey));
+    const thumb=item?item.thumb:m.thumb;
+    const title=item?item.title:m.title;
+    const year=item?item.year:m.year;
+    const rating=item?item.rating:m.rating;
+    return`<div style="text-align:center;cursor:pointer;flex:0 0 130px;" onclick="closeColModal();${item?`openDetail('${item.fbKey||item.id}')`:''}" >
+      <img src="${thumb||''}" alt="${title}" style="width:130px;height:190px;object-fit:cover;border-radius:10px;border:2px solid rgba(255,255,255,0.1);" onerror="this.src='https://via.placeholder.com/130x190/1a1a1a/333?text=?'">
+      <div style="margin-top:7px;">
+        <div style="font-size:9px;color:var(--red);font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:1px;">PART ${i+1}</div>
+        <div style="font-size:12px;color:#fff;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;">${title||'?'}</div>
+        <div style="font-size:10px;color:var(--gray);">${year||''} ${rating?'⭐'+rating:''}</div>
+      </div>
+    </div>`;
+  }).join('');
+  const el=document.createElement('div');
+  el.id='colDetailModal';
+  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(10px);';
+  el.innerHTML=`<div style="background:var(--dark2);border:1px solid rgba(229,9,20,0.2);border-radius:18px;padding:28px;max-width:700px;width:100%;max-height:85vh;overflow-y:auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div>
+        <div style="font-size:11px;color:var(--red);font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:2px;margin-bottom:4px;">📦 COLLECTION</div>
+        <div style="font-family:'Bebas Neue',cursive;font-size:26px;letter-spacing:3px;color:#fff;">${col.name}</div>
+        <div style="font-size:11px;color:var(--gray);">${movies.length} Films</div>
+      </div>
+      <button onclick="closeColModal()" style="background:rgba(255,255,255,0.06);border:none;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-times"></i></button>
+    </div>
+    <div style="display:flex;gap:14px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none;">${moviesHtml}</div>
+  </div>`;
+  el.addEventListener('click',e=>{if(e.target===el)closeColModal();});
+  document.body.appendChild(el);
+  colModalEl=el;
+}
+function closeColModal(){if(colModalEl){colModalEl.remove();colModalEl=null;}}
+
+// Detail page collection timeline
+function renderDetailCollection(contentItem){
+  const sec=document.getElementById('dtCollectionSection');
+  const tl=document.getElementById('dtColTimeline');
+  if(!sec||!tl)return;
+  const contentKey=contentItem.fbKey||String(contentItem.id);
+  // Find which collection this movie belongs to
+  const col=allCollections.find(c=>(c.movies||[]).some(m=>m.fbKey===contentKey||String(m.fbKey)===String(contentItem.id)));
+  if(!col){sec.style.display='none';return;}
+  sec.style.display='block';
+  const movies=col.movies||[];
+  document.getElementById('dtColTitle').textContent=col.name;
+  document.getElementById('dtColBadge').textContent=movies.length+' PARTS';
+  tl.innerHTML=movies.map((m,i)=>{
+    const item=(window.allContent||[]).find(c=>c.fbKey===m.fbKey||String(c.id)===String(m.fbKey));
+    const isCurrent=m.fbKey===contentKey||String(m.fbKey)===String(contentItem.id);
+    const thumb=item?item.thumb:m.thumb;
+    const title=item?item.title:m.title;
+    const year=item?item.year:m.year;
+    const rating=item?item.rating:m.rating;
+    return`<div class="dt-col-movie-card" onclick="${item&&!isCurrent?`openDetail('${item.fbKey||item.id}')`:''}" title="${title}">
+      <div class="dtcm-img-wrap">
+        ${isCurrent?'<div class="dtcm-current">▶ NOW</div>':''}
+        <img class="dtcm-img" src="${thumb||''}" alt="${title}" style="${isCurrent?'border-color:var(--red);box-shadow:0 0 16px rgba(229,9,20,0.5);':''}" onerror="this.src='https://via.placeholder.com/130x185/1a1a1a/333?text=?'">
+      </div>
+      <div class="dtcm-info">
+        <div class="dtcm-num">PART ${i+1}</div>
+        <div class="dtcm-title">${title||'?'}</div>
+        <div class="dtcm-year">${year||''}</div>
+        ${rating?`<div class="dtcm-rating"><i class="fas fa-star" style="font-size:8px;"></i>${rating}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  // Auto scroll to current
+  setTimeout(()=>{
+    const idx=movies.findIndex(m=>m.fbKey===contentKey||String(m.fbKey)===String(contentItem.id));
+    if(idx>1)tl.scrollTo({left:(idx-1)*146,behavior:'smooth'});
+  },300);
+}
+
+/* ===== ADMIN COLLECTIONS ===== */
+function loadAdminCollections(){
+  if(!window._listenCollections){renderAdminCollections([]);return;}
+  window._listenCollections((cols)=>{
+    allCollections=cols;
+    renderHomeCollections();
+    renderAdminCollections(cols);
+  });
+}
+
+function renderAdminCollections(cols){
+  const el=document.getElementById('adminCollectionList');if(!el)return;
+  if(!cols.length){el.innerHTML='<div style="color:var(--gray);font-size:12px;padding:16px;text-align:center;">No collections yet. Create one above!</div>';return;}
+  el.innerHTML=cols.map(col=>{
+    const movies=col.movies||[];
+    const moviesPreview=movies.slice(0,4).map(m=>`<img src="${m.thumb||''}" alt="" style="width:32px;height:46px;object-fit:cover;border-radius:4px;border:1px solid rgba(255,255,255,0.1);" onerror="this.style.display='none'">`).join('');
+    return`<div class="col-admin-card">
+      <div class="col-admin-header">
+        <div>
+          <div class="col-admin-name">📦 ${col.name}</div>
+          <div style="font-size:11px;color:var(--gray);margin-top:2px;">${movies.length} films · Order: ${col.order||0}</div>
+        </div>
+        <div class="col-admin-actions">
+          <button class="act-btn edit" onclick="editCollection('${col.fbKey}')"><i class="fas fa-edit"></i></button>
+          <button class="act-btn del" onclick="deleteCollection('${col.fbKey}')"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">${moviesPreview}${movies.length>4?`<div style="font-size:11px;color:var(--gray);display:flex;align-items:center;padding-left:4px;">+${movies.length-4} more</div>`:''}</div>
+    </div>`;
+  }).join('');
+}
+
+function searchColMovies(q){
+  const el=document.getElementById('colMovieSearchResults');if(!el)return;
+  if(!q||q.length<2){el.innerHTML='';return;}
+  const results=(window.allContent||[]).filter(c=>c.title&&c.title.toLowerCase().includes(q.toLowerCase())).slice(0,8);
+  if(!results.length){el.innerHTML='<div style="font-size:12px;color:var(--gray);padding:8px;">No movies found.</div>';return;}
+  el.innerHTML=results.map(c=>`
+    <div class="col-movie-search-result" onclick="addMovieToCollection('${c.fbKey||c.id}')">
+      <img src="${c.thumb||''}" alt="${c.title}" onerror="this.style.display='none'">
+      <div><span>${c.title}</span><small>${c.year} · ${c.category}</small></div>
+    </div>`).join('');
+}
+
+function addMovieToCollection(key){
+  const item=(window.allContent||[]).find(c=>c.fbKey===key||String(c.id)===key);
+  if(!item)return;
+  if(colSelectedMovies.find(m=>m.fbKey===key)){showToast('Already added!');return;}
+  const partNum=colSelectedMovies.length+1;
+  colSelectedMovies.push({fbKey:key,title:item.title,thumb:item.thumb,year:item.year,rating:item.rating,part:partNum});
+  renderColSelectedMovies();
+  document.getElementById('colMovieSearch').value='';
+  document.getElementById('colMovieSearchResults').innerHTML='';
+}
+
+function removeColMovie(idx){colSelectedMovies.splice(idx,1);colSelectedMovies.forEach((m,i)=>m.part=i+1);renderColSelectedMovies();}
+
+function renderColSelectedMovies(){
+  const el=document.getElementById('colSelectedMovies');if(!el)return;
+  if(!colSelectedMovies.length){el.innerHTML='<div style="color:rgba(255,255,255,0.2);font-size:11px;padding:8px;">Movies add කරන්න above search use කරන්න...</div>';return;}
+  el.innerHTML=colSelectedMovies.map((m,i)=>`
+    <div class="col-sel-chip">
+      <img src="${m.thumb||''}" alt="" style="width:22px;height:30px;object-fit:cover;border-radius:3px;" onerror="this.style.display='none'">
+      <span class="col-part-badge">P${i+1}</span>
+      <span>${m.title}</span>
+      <button onclick="removeColMovie(${i})">✕</button>
+    </div>`).join('');
+}
+
+function liveColPreview(){
+  const v=document.getElementById('colCover')?.value.trim();
+  const img=document.getElementById('colCoverPrev');
+  if(v){img.src=v;img.style.display='block';}else img.style.display='none';
+}
+
+async function saveCollection(){
+  const name=document.getElementById('colName')?.value.trim();
+  if(!name){showToast('Collection name ලියන්න!');return;}
+  if(!colSelectedMovies.length){showToast('අඩුම ගානේ movie 1ක් add කරන්න!');return;}
+  const cover=document.getElementById('colCover')?.value.trim();
+  const order=parseInt(document.getElementById('colOrder')?.value)||1;
+  const editKey=document.getElementById('colEditKey')?.value||'';
+  const col={name,cover,order,movies:colSelectedMovies,updatedAt:Date.now()};
+  if(editKey&&window._fbUpdateCollection){
+    try{await window._fbUpdateCollection(editKey,col);showToast('Collection updated! 📦','success');resetColForm();}catch(e){showToast('Failed: '+e.message);}
+  } else if(window._fbSaveCollection){
+    try{await window._fbSaveCollection({...col,createdAt:Date.now()});showToast('Collection created! 📦','success');resetColForm();}catch(e){showToast('Failed: '+e.message);}
+  }
+}
+
+function editCollection(fbKey){
+  const col=allCollections.find(c=>c.fbKey===fbKey);if(!col)return;
+  document.getElementById('colEditKey').value=fbKey;
+  document.getElementById('colName').value=col.name||'';
+  document.getElementById('colCover').value=col.cover||'';
+  document.getElementById('colOrder').value=col.order||1;
+  liveColPreview();
+  colSelectedMovies=[...(col.movies||[])];
+  renderColSelectedMovies();
+  document.querySelector('#collectionsTab').scrollIntoView({behavior:'smooth'});
+  showToast('Editing: '+col.name,'info');
+}
+
+async function deleteCollection(fbKey){
+  if(!confirm('Delete this collection?'))return;
+  if(window._fbDeleteCollection){
+    try{await window._fbDeleteCollection(fbKey);showToast('Deleted!','success');}catch(e){showToast('Failed: '+e.message);}
+  }
+}
+
+function resetColForm(){
+  document.getElementById('colName').value='';
+  document.getElementById('colCover').value='';
+  document.getElementById('colOrder').value='1';
+  document.getElementById('colEditKey').value='';
+  document.getElementById('colCoverPrev').style.display='none';
+  document.getElementById('colMovieSearch').value='';
+  document.getElementById('colMovieSearchResults').innerHTML='';
+  colSelectedMovies=[];renderColSelectedMovies();
+}
 
 </script>
 </body>
-  </html>
+    </html>
