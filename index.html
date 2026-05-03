@@ -397,6 +397,26 @@ body{font-family:'Poppins',sans-serif;background:var(--black);color:var(--light)
 .ep-srt-info h5{font-size:12px;font-weight:700;color:var(--gold);margin-bottom:2px;font-family:'Rajdhani',sans-serif;}
 .ep-srt-info p{font-size:10px;color:rgba(255,255,255,0.35);}
 
+/* Multi-quality ep downloads */
+.ep-ql-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px;}
+.ep-ql-btn{display:flex;align-items:center;gap:7px;border-radius:8px;padding:8px 11px;text-decoration:none;transition:all 0.18s;flex:1;min-width:72px;cursor:pointer;}
+.ep-ql-btn:hover{transform:translateY(-2px);}
+.ep-ql-btn .ql-icon{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;}
+.ep-ql-btn .ql-label{font-size:11px;font-family:'Rajdhani',sans-serif;font-weight:700;line-height:1.2;}
+.ep-ql-btn .ql-size{font-size:9px;color:rgba(255,255,255,0.35);}
+.ep-ql-btn.p480{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.22);}
+.ep-ql-btn.p480:hover{background:rgba(59,130,246,0.18);border-color:rgba(59,130,246,0.5);}
+.ep-ql-btn.p480 .ql-icon{background:rgba(59,130,246,0.15);color:var(--blue);}
+.ep-ql-btn.p480 .ql-label{color:var(--blue);}
+.ep-ql-btn.p720{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.22);}
+.ep-ql-btn.p720:hover{background:rgba(34,197,94,0.18);border-color:rgba(34,197,94,0.5);}
+.ep-ql-btn.p720 .ql-icon{background:rgba(34,197,94,0.15);color:var(--green);}
+.ep-ql-btn.p720 .ql-label{color:var(--green);}
+.ep-ql-btn.p1080{background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.22);}
+.ep-ql-btn.p1080:hover{background:rgba(168,85,247,0.18);border-color:rgba(168,85,247,0.5);}
+.ep-ql-btn.p1080 .ql-icon{background:rgba(168,85,247,0.15);color:var(--purple);}
+.ep-ql-btn.p1080 .ql-label{color:var(--purple);}
+
 /* COMMENTS */
 .comments-wrap{margin:28px 0 0;padding:20px;background:var(--dark2);border:1px solid rgba(255,255,255,0.05);border-radius:14px;}
 .comments-title{font-family:'Bebas Neue',cursive;font-size:20px;letter-spacing:3px;color:#fff;display:flex;align-items:center;gap:10px;margin-bottom:18px;}
@@ -819,11 +839,10 @@ body{font-family:'Poppins',sans-serif;background:var(--black);color:var(--light)
     <div class="nav-item" onclick="showPage('terms')"><i class="fas fa-file-alt"></i> Terms</div>
     <div class="nav-item" onclick="showPage('request')"><i class="fas fa-paper-plane"></i> Movie Request</div>
     <div class="sb-label">Developers</div>
-    <div class="nav-item" style="pointer-events:none;opacity:0.45;font-size:12px;"><i class="fas fa-code"></i> Gavesh Vimanshana</div>
-    <div class="nav-item" style="pointer-events:none;opacity:0.45;font-size:12px;"><i class="fas fa-code"></i> P Kaveesha</div>
+    <div class="nav-item" style="pointer-events:none;opacity:0.45;font-size:12px;"><i class="fas fa-code"></i> Ghost Vortex</div>
   </nav>
   <button class="admin-sb-btn" onclick="showPage('admin')"><i class="fas fa-cog"></i> Admin Panel</button>
-  <div class="sb-dev"><strong>DEVELOPERS</strong>Gavesh Vimanshana<br>P Kaveesha</div>
+  <div class="sb-dev"><strong>DEVELOPER TEAM</strong>Ghost Vortex</div>
 </aside>
 
 <main id="main">
@@ -896,7 +915,7 @@ body{font-family:'Poppins',sans-serif;background:var(--black);color:var(--light)
       </div>
       <div class="ft-bottom">
         <p>© 2025 StreamX. All rights reserved.</p>
-        <div class="ft-devs"><div class="ft-dev"><div class="dev-av">GV</div><span>Gavesh Vimanshana</span></div><div class="ft-dev"><div class="dev-av">PK</div><span>P Kaveesha</span></div></div>
+        <div class="ft-devs"><div class="ft-dev"><div class="dev-av">GV</div><span>Ghost Vortex</span></div></div>
       </div>
     </footer>
   </div>
@@ -1050,7 +1069,7 @@ body{font-family:'Poppins',sans-serif;background:var(--black);color:var(--light)
       <h3>2. Content Usage</h3><p>All content is for personal, non-commercial use only.</p>
       <h3>3. 18+ Content</h3><p>Adult content requires age verification (18+).</p>
       <h3>4. Disclaimer</h3><p>StreamX provides download links for entertainment. We do not host video files.</p>
-      <h3>Contact</h3><p>Developers: Gavesh Vimanshana &amp; P Kaveesha</p>
+      <h3>Contact</h3><p>Developer Team: Ghost Vortex</p>
     </div>
   </div>
 
@@ -1338,11 +1357,9 @@ body{font-family:'Poppins',sans-serif;background:var(--black);color:var(--light)
 
 <!-- WATERMARK -->
 <div class="streamx-watermark">
-  <i class="fas fa-fire" style="color:var(--red);font-size:11px;"></i>
+  <i class="fas fa-ghost" style="color:var(--red);font-size:11px;"></i>
   <span>POWERED BY</span>
-  <strong>STREAMX</strong>
-  <span>·</span>
-  <span style="font-size:10px;font-family:'Rajdhani',sans-serif;letter-spacing:1px;color:rgba(255,255,255,0.25);">GV & PK</span>
+  <strong>GHOST VORTEX</strong>
 </div>
 
 <script>
@@ -1362,10 +1379,10 @@ const BADGE_CFG={season:{cls:'spb-season',icon:'📺',label:'Season'},sindub:{cl
 
 /* DEMO DATA */
 const demoData=[
-  {id:'d1',type:'movie',title:'Oppenheimer',category:'Drama',year:2023,rating:8.9,duration:'3h 0m',qtype:'WEB',thumb:'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',qimages:['https://image.tmdb.org/t/p/original/fm6KqXpk3M2HVveHwCrBSSBaO0V.jpg'],desc:'The story of J. Robert Oppenheimer and his role in the development of the atomic bomb during World War II.',writer:'Gavesh Vimanshana',downloads:[{q:'480p',link:'',size:'700 MB',lang:'Sinhala'},{q:'720p',link:'',size:'1.4 GB',lang:'Sinhala'},{q:'1080p',link:'',size:'2.7 GB',lang:'Sinhala'}],srt:'',trailer:'https://www.youtube.com/embed/uYPbbksJxIg',badges:['hd'],cast:[{name:'Cillian Murphy',role:'Oppenheimer',photo:'https://image.tmdb.org/t/p/w185/dm6V24NjjvjMiCtbMkc8Y2WPm2e.jpg'}],isAdult:false},
-  {id:'d2',type:'movie',title:'Dune: Part Two',category:'Sci-Fi',year:2024,rating:8.7,duration:'2h 46m',qtype:'WEB',thumb:'https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg',qimages:['https://image.tmdb.org/t/p/original/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg'],desc:'Paul Atreides unites with Chani and the Fremen while seeking revenge.',writer:'P Kaveesha',downloads:[{q:'480p',link:'',size:'900 MB',lang:'Sinhala'},{q:'1080p',link:'',size:'2.9 GB',lang:'Sinhala'}],srt:'',trailer:'https://www.youtube.com/embed/Way9Dexny3w',badges:['hd','4k'],cast:[{name:'Timothée Chalamet',role:'Paul',photo:'https://image.tmdb.org/t/p/w185/Be2tfOKa9KASh62GO7lxT8sMGIn.jpg'}],isAdult:false},
-  {id:'d6',type:'tvseries',title:'The Last of Us',category:'Drama',year:2023,rating:9.0,qtype:'WEB',thumb:'https://image.tmdb.org/t/p/w500/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg',qimages:['https://image.tmdb.org/t/p/original/uDgy6hyPd82kOHh6I95iiuVk2dn.jpg'],desc:'Joel and Ellie traverse a post-pandemic America.',writer:'P Kaveesha',seasons:[{num:1,episodes:[{ep:1,title:"When You're Lost in the Darkness",dlLink:'',dlSize:'800 MB',srtLink:'',desc:'Two decades after a fungal outbreak.'},{ep:2,title:'Infected',dlLink:'',dlSize:'750 MB',srtLink:'',desc:'Separated after a terrifying discovery.'}]},{num:2,episodes:[{ep:1,title:'Future Days',dlLink:'',dlSize:'900 MB',srtLink:'',desc:'Five years later in Jackson.'}]}],trailer:'https://www.youtube.com/embed/uLtkt8BonwM',badges:['sinsub','season'],seasonNum:'2',cast:[{name:'Pedro Pascal',role:'Joel',photo:'https://image.tmdb.org/t/p/w185/bIlYH4l2AyYvEysmS2AOfjO7Dn8.jpg'}],isAdult:false},
-  {id:'d7',type:'tvseries',title:'House of the Dragon',category:'Fantasy',year:2022,rating:8.4,qtype:'HDRIP',thumb:'https://image.tmdb.org/t/p/w500/z2yahl2uefxDCl0nogcRBstwruJ.jpg',qimages:['https://image.tmdb.org/t/p/original/etj8E2o0Bud0HkONVQPjyCkIvpv.jpg'],desc:'A succession war within House Targaryen.',writer:'Gavesh Vimanshana',seasons:[{num:1,episodes:[{ep:1,title:'The Heirs of the Dragon',dlLink:'',dlSize:'1.1 GB',srtLink:'',desc:''}]}],trailer:'',badges:['sindub'],cast:[],isAdult:false},
+  {id:'d1',type:'movie',title:'Oppenheimer',category:'Drama',year:2023,rating:8.9,duration:'3h 0m',qtype:'WEB',thumb:'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',qimages:['https://image.tmdb.org/t/p/original/fm6KqXpk3M2HVveHwCrBSSBaO0V.jpg'],desc:'The story of J. Robert Oppenheimer and his role in the development of the atomic bomb during World War II.',writer:'Ghost Vortex',downloads:[{q:'480p',link:'',size:'700 MB',lang:'Sinhala'},{q:'720p',link:'',size:'1.4 GB',lang:'Sinhala'},{q:'1080p',link:'',size:'2.7 GB',lang:'Sinhala'}],srt:'',trailer:'https://www.youtube.com/embed/uYPbbksJxIg',badges:['hd'],cast:[{name:'Cillian Murphy',role:'Oppenheimer',photo:'https://image.tmdb.org/t/p/w185/dm6V24NjjvjMiCtbMkc8Y2WPm2e.jpg'}],isAdult:false},
+  {id:'d2',type:'movie',title:'Dune: Part Two',category:'Sci-Fi',year:2024,rating:8.7,duration:'2h 46m',qtype:'WEB',thumb:'https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg',qimages:['https://image.tmdb.org/t/p/original/xOMo8BRK7PfcJv9JCnx7s5hj0PX.jpg'],desc:'Paul Atreides unites with Chani and the Fremen while seeking revenge.',writer:'Ghost Vortex',downloads:[{q:'480p',link:'',size:'900 MB',lang:'Sinhala'},{q:'1080p',link:'',size:'2.9 GB',lang:'Sinhala'}],srt:'',trailer:'https://www.youtube.com/embed/Way9Dexny3w',badges:['hd','4k'],cast:[{name:'Timothée Chalamet',role:'Paul',photo:'https://image.tmdb.org/t/p/w185/Be2tfOKa9KASh62GO7lxT8sMGIn.jpg'}],isAdult:false},
+  {id:'d6',type:'tvseries',title:'The Last of Us',category:'Drama',year:2023,rating:9.0,qtype:'WEB',thumb:'https://image.tmdb.org/t/p/w500/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg',qimages:['https://image.tmdb.org/t/p/original/uDgy6hyPd82kOHh6I95iiuVk2dn.jpg'],desc:'Joel and Ellie traverse a post-pandemic America.',writer:'Ghost Vortex',seasons:[{num:1,episodes:[{ep:1,title:"When You're Lost in the Darkness",dlLink:'',dlSize:'800 MB',srtLink:'',desc:'Two decades after a fungal outbreak.'},{ep:2,title:'Infected',dlLink:'',dlSize:'750 MB',srtLink:'',desc:'Separated after a terrifying discovery.'}]},{num:2,episodes:[{ep:1,title:'Future Days',dlLink:'',dlSize:'900 MB',srtLink:'',desc:'Five years later in Jackson.'}]}],trailer:'https://www.youtube.com/embed/uLtkt8BonwM',badges:['sinsub','season'],seasonNum:'2',cast:[{name:'Pedro Pascal',role:'Joel',photo:'https://image.tmdb.org/t/p/w185/bIlYH4l2AyYvEysmS2AOfjO7Dn8.jpg'}],isAdult:false},
+  {id:'d7',type:'tvseries',title:'House of the Dragon',category:'Fantasy',year:2022,rating:8.4,qtype:'HDRIP',thumb:'https://image.tmdb.org/t/p/w500/z2yahl2uefxDCl0nogcRBstwruJ.jpg',qimages:['https://image.tmdb.org/t/p/original/etj8E2o0Bud0HkONVQPjyCkIvpv.jpg'],desc:'A succession war within House Targaryen.',writer:'Ghost Vortex',seasons:[{num:1,episodes:[{ep:1,title:'The Heirs of the Dragon',dlLink:'',dlSize:'1.1 GB',srtLink:'',desc:''}]}],trailer:'',badges:['sindub'],cast:[],isAdult:false},
   {id:'d8',type:'movie',title:'18+ Demo',category:'Thriller',year:2024,rating:7.5,qtype:'WEB',thumb:'https://image.tmdb.org/t/p/w500/sh7Rg8Er3tFcN9BpKIPOMvALgZd.jpg',qimages:[],desc:'Demo 18+ content.',writer:'StreamX',downloads:[],srt:'',trailer:'',badges:[],cast:[],isAdult:true},
 ];
 
@@ -1627,20 +1644,25 @@ function renderSeasons(seasons){document.getElementById('seasonTabs').innerHTML=
 function pickSeason(btn,i){document.querySelectorAll('.season-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');showEps(currentContent.seasons[i]);}
 function showEps(season){
   document.getElementById('epGrid').innerHTML=season.episodes.map(ep=>{
-    const hasDl=ep.dlLink&&ep.dlLink.trim();
+    const has480=ep.dl480&&ep.dl480.trim();
+    const has720=ep.dl720&&ep.dl720.trim();
+    const has1080=ep.dl1080&&ep.dl1080.trim();
+    // Legacy single link fallback
+    const hasLegacy=ep.dlLink&&ep.dlLink.trim();
     const hasSrt=ep.srtLink&&ep.srtLink.trim();
+    const hasAny=has480||has720||has1080||hasLegacy;
+    const qlButtons=[
+      has480?`<a href="${ep.dl480}" class="ep-ql-btn p480" target="_blank" download onclick="if(window._trackDownload)window._trackDownload();"><div class="ql-icon"><i class="fas fa-download"></i></div><div><div class="ql-label">480p</div><div class="ql-size">${ep.sz480||''}</div></div></a>`:'',
+      has720?`<a href="${ep.dl720}" class="ep-ql-btn p720" target="_blank" download onclick="if(window._trackDownload)window._trackDownload();"><div class="ql-icon"><i class="fas fa-download"></i></div><div><div class="ql-label">720p</div><div class="ql-size">${ep.sz720||''}</div></div></a>`:'',
+      has1080?`<a href="${ep.dl1080}" class="ep-ql-btn p1080" target="_blank" download onclick="if(window._trackDownload)window._trackDownload();"><div class="ql-icon"><i class="fas fa-download"></i></div><div><div class="ql-label">1080p</div><div class="ql-size">${ep.sz1080||''}</div></div></a>`:'',
+    ].filter(Boolean).join('');
     return `<div class="ep-card">
       <div class="ep-head"><div class="ep-n">E${ep.ep}</div><div><div class="ep-t">${ep.title||'Episode '+ep.ep}</div><div class="ep-d">${ep.desc||''}</div></div></div>
       <div class="ep-acts">
-        ${hasDl?`<a href="${ep.dlLink}" target="_blank" class="ep-dl" download onclick="if(window._trackDownload)window._trackDownload();">
-          <div class="ep-dl-icon"><i class="fas fa-download"></i></div>
-          <div class="ep-dl-info"><h5>Download Episode</h5><p>${ep.dlSize||''}${ep.dlSize?' · ':''}E${ep.ep}</p></div>
-        </a>`:''}
-        ${hasSrt?`<a href="${ep.srtLink}" target="_blank" class="ep-srt" download>
-          <div class="ep-srt-icon"><i class="fas fa-closed-captioning"></i></div>
-          <div class="ep-srt-info"><h5>🇱🇰 Sinhala Subtitle</h5><p>SRT download</p></div>
-        </a>`:''}
-        ${!hasDl&&!hasSrt?'<div style="color:var(--gray);font-size:11px;padding:4px 0;">No links yet</div>':''}
+        ${qlButtons?`<div class="ep-ql-row">${qlButtons}</div>`:''}
+        ${!qlButtons&&hasLegacy?`<a href="${ep.dlLink}" target="_blank" class="ep-dl" download onclick="if(window._trackDownload)window._trackDownload();"><div class="ep-dl-icon"><i class="fas fa-download"></i></div><div class="ep-dl-info"><h5>Download Episode</h5><p>${ep.dlSize||''}${ep.dlSize?' · ':''}E${ep.ep}</p></div></a>`:''}
+        ${hasSrt?`<a href="${ep.srtLink}" target="_blank" class="ep-srt" download><div class="ep-srt-icon"><i class="fas fa-closed-captioning"></i></div><div class="ep-srt-info"><h5>🇱🇰 Sinhala Subtitle</h5><p>SRT download</p></div></a>`:''}
+        ${!hasAny&&!hasSrt?'<div style="color:var(--gray);font-size:11px;padding:4px 0;">No links yet</div>':''}
       </div>
     </div>`;
   }).join('');
@@ -1798,13 +1820,27 @@ function addEp(s){
   const ep=c.children.length+1;
   const r=document.createElement('div');r.className='ep-row-a';
   const iS='background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:5px;padding:6px;color:#fff;font-size:11px;outline:none;width:100%;';
+  const iSBlue='background:rgba(255,255,255,0.05);border:1px solid rgba(59,130,246,0.3);border-radius:5px;padding:6px;color:var(--blue);font-size:11px;outline:none;width:100%;';
   const iSGreen='background:rgba(255,255,255,0.05);border:1px solid rgba(34,197,94,0.25);border-radius:5px;padding:6px;color:#22c55e;font-size:11px;outline:none;width:100%;';
+  const iSPurple='background:rgba(255,255,255,0.05);border:1px solid rgba(168,85,247,0.3);border-radius:5px;padding:6px;color:var(--purple);font-size:11px;outline:none;width:100%;';
   const iSGold='background:rgba(255,255,255,0.05);border:1px solid rgba(245,197,24,0.25);border-radius:5px;padding:6px;color:var(--gold);font-size:11px;outline:none;width:100%;';
-  r.innerHTML=`<input type="number" value="${ep}" class="en" data-s="${s}" style="${iS}">
-    <input type="text" placeholder="Title..." class="et" data-s="${s}" style="${iS}">
-    <input type="text" placeholder="Download link..." class="el" data-s="${s}" style="${iSGreen}">
-    <input type="text" placeholder="File size..." class="esz" data-s="${s}" style="${iS}">
-    <input type="text" placeholder="🇱🇰 SRT link..." class="esrt" data-s="${s}" style="${iSGold}">`;
+  r.innerHTML=`<div style="display:grid;grid-template-columns:60px 1fr;gap:6px;margin-bottom:6px;">
+    <input type="number" value="${ep}" class="en" data-s="${s}" style="${iS}" placeholder="Ep#">
+    <input type="text" placeholder="Episode Title..." class="et" data-s="${s}" style="${iS}">
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 80px;gap:5px;margin-bottom:4px;">
+    <input type="text" placeholder="🔵 480p Link..." class="el480" data-s="${s}" style="${iSBlue}">
+    <input type="text" placeholder="Size" class="esz480" data-s="${s}" style="${iS}">
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 80px;gap:5px;margin-bottom:4px;">
+    <input type="text" placeholder="🟢 720p Link..." class="el720" data-s="${s}" style="${iSGreen}">
+    <input type="text" placeholder="Size" class="esz720" data-s="${s}" style="${iS}">
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 80px;gap:5px;margin-bottom:4px;">
+    <input type="text" placeholder="🟣 1080p Link..." class="el1080" data-s="${s}" style="${iSPurple}">
+    <input type="text" placeholder="Size" class="esz1080" data-s="${s}" style="${iS}">
+  </div>
+  <input type="text" placeholder="🇱🇰 SRT Subtitle link..." class="esrt" data-s="${s}" style="${iSGold}">`;
   c.appendChild(r);
 }
 
@@ -1829,7 +1865,7 @@ async function submitContent(){
       const s=blk.id.replace('epR_','');
       if(seen.has(s))return;seen.add(s);
       const rows=blk.querySelectorAll('.ep-row-a'),eps=[];
-      rows.forEach(row=>eps.push({ep:parseInt(row.querySelector('.en')?.value)||eps.length+1,title:row.querySelector('.et')?.value||'',dlLink:row.querySelector('.el')?.value||'',dlSize:row.querySelector('.esz')?.value||'',srtLink:row.querySelector('.esrt')?.value||'',desc:''}));
+      rows.forEach(row=>eps.push({ep:parseInt(row.querySelector('.en')?.value)||eps.length+1,title:row.querySelector('.et')?.value||'',dl480:row.querySelector('.el480')?.value||'',sz480:row.querySelector('.esz480')?.value||'',dl720:row.querySelector('.el720')?.value||'',sz720:row.querySelector('.esz720')?.value||'',dl1080:row.querySelector('.el1080')?.value||'',sz1080:row.querySelector('.esz1080')?.value||'',srtLink:row.querySelector('.esrt')?.value||'',desc:''}));
       item.seasons.push({num:parseInt(s),episodes:eps});
     });
   }
@@ -1888,21 +1924,34 @@ function openEdit(id,fbKey){
   let seHtml='';
   if(item.type==='tvseries'&&item.seasons){
     const iS='background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:5px;padding:6px;color:#fff;font-size:11px;outline:none;width:100%;';
+    const iSBlue='background:rgba(255,255,255,0.05);border:1px solid rgba(59,130,246,0.3);border-radius:5px;padding:6px;color:var(--blue);font-size:11px;outline:none;width:100%;';
     const iSGreen='background:rgba(255,255,255,0.05);border:1px solid rgba(34,197,94,0.25);border-radius:5px;padding:6px;color:#22c55e;font-size:11px;outline:none;width:100%;';
+    const iSPurple='background:rgba(255,255,255,0.05);border:1px solid rgba(168,85,247,0.3);border-radius:5px;padding:6px;color:var(--purple);font-size:11px;outline:none;width:100%;';
     const iSGold='background:rgba(255,255,255,0.05);border:1px solid rgba(245,197,24,0.25);border-radius:5px;padding:6px;color:var(--gold);font-size:11px;outline:none;width:100%;';
     item.seasons.forEach((s,si)=>{
       seHtml+=`<div style="margin-bottom:13px;" id="eSBlock_${si}">
         <div class="s-hdr"><h4>📺 SEASON ${s.num}</h4><button class="add-btn" type="button" onclick="addEditEp(${si})"><i class="fas fa-plus"></i> ADD EP</button></div>
         <div class="ep-list-a">
-          <div style="display:grid;grid-template-columns:40px 1fr 1fr 1fr 1fr;gap:6px;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,0.2);font-family:'Rajdhani',sans-serif;margin-bottom:6px;"><div>EP#</div><div>TITLE</div><div>DOWNLOAD</div><div>SIZE</div><div>🇱🇰 SRT</div></div>
           <div id="eEpR_${si}">`;
       s.episodes.forEach((ep,ei)=>{
-        seHtml+=`<div class="ep-row-a" style="margin-bottom:5px;" id="eEpRow_${si}_${ei}">
-          <input type="number" value="${ep.ep}" class="e-edit-n" data-s="${si}" data-e="${ei}" style="${iS}">
-          <input type="text" value="${(ep.title||'').replace(/"/g,'&quot;')}" class="e-edit-t" data-s="${si}" data-e="${ei}" style="${iS}">
-          <input type="text" value="${ep.dlLink||''}" class="e-edit-l" data-s="${si}" data-e="${ei}" style="${iSGreen}">
-          <input type="text" value="${ep.dlSize||''}" class="e-edit-sz" data-s="${si}" data-e="${ei}" style="${iS}" placeholder="Size...">
-          <input type="text" value="${ep.srtLink||''}" class="e-edit-srt" data-s="${si}" data-e="${ei}" style="${iSGold}" placeholder="🇱🇰 SRT...">
+        seHtml+=`<div class="ep-row-a" style="margin-bottom:10px;padding:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:7px;" id="eEpRow_${si}_${ei}">
+          <div style="display:grid;grid-template-columns:60px 1fr;gap:6px;margin-bottom:5px;">
+            <input type="number" value="${ep.ep}" class="e-edit-n" data-s="${si}" data-e="${ei}" style="${iS}" placeholder="Ep#">
+            <input type="text" value="${(ep.title||'').replace(/"/g,'&quot;')}" class="e-edit-t" data-s="${si}" data-e="${ei}" style="${iS}">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 80px;gap:5px;margin-bottom:4px;">
+            <input type="text" value="${ep.dl480||ep.dlLink||''}" class="e-edit-480" data-s="${si}" data-e="${ei}" style="${iSBlue}" placeholder="🔵 480p link...">
+            <input type="text" value="${ep.sz480||ep.dlSize||''}" class="e-edit-sz480" data-s="${si}" data-e="${ei}" style="${iS}" placeholder="Size">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 80px;gap:5px;margin-bottom:4px;">
+            <input type="text" value="${ep.dl720||''}" class="e-edit-720" data-s="${si}" data-e="${ei}" style="${iSGreen}" placeholder="🟢 720p link...">
+            <input type="text" value="${ep.sz720||''}" class="e-edit-sz720" data-s="${si}" data-e="${ei}" style="${iS}" placeholder="Size">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 80px;gap:5px;margin-bottom:4px;">
+            <input type="text" value="${ep.dl1080||''}" class="e-edit-1080" data-s="${si}" data-e="${ei}" style="${iSPurple}" placeholder="🟣 1080p link...">
+            <input type="text" value="${ep.sz1080||''}" class="e-edit-sz1080" data-s="${si}" data-e="${ei}" style="${iS}" placeholder="Size">
+          </div>
+          <input type="text" value="${ep.srtLink||''}" class="e-edit-srt" data-s="${si}" data-e="${ei}" style="${iSGold}" placeholder="🇱🇰 SRT link...">
         </div>`;
       });
       seHtml+=`</div></div></div>`;
@@ -1961,15 +2010,29 @@ let _editSeasonCount=0;
 function addEditEp(si){
   const c=document.getElementById('eEpR_'+si);if(!c)return;
   const ei=c.children.length;
-  const iS='background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:5px;padding:6px;color:#fff;font-size:11px;outline:none;width:100%;';
-  const iSGreen='background:rgba(255,255,255,0.05);border:1px solid rgba(34,197,94,0.25);border-radius:5px;padding:6px;color:#22c55e;font-size:11px;outline:none;width:100%;';
-  const iSGold='background:rgba(255,255,255,0.05);border:1px solid rgba(245,197,24,0.25);border-radius:5px;padding:6px;color:var(--gold);font-size:11px;outline:none;width:100%;';
-  const r=document.createElement('div');r.className='ep-row-a';r.style.marginBottom='5px';r.dataset.s=si;r.dataset.e=ei;r.dataset.new='1';
-  r.innerHTML=`<input type="number" value="${ei+1}" class="e-edit-n" data-s="${si}" data-e="${ei}" style="${iS}">
-    <input type="text" placeholder="Title..." class="e-edit-t" data-s="${si}" data-e="${ei}" style="${iS}">
-    <input type="text" placeholder="Download link..." class="e-edit-l" data-s="${si}" data-e="${ei}" style="${iSGreen}">
-    <input type="text" placeholder="File size..." class="e-edit-sz" data-s="${si}" data-e="${ei}" style="${iS}">
-    <input type="text" placeholder="🇱🇰 SRT link..." class="e-edit-srt" data-s="${si}" data-e="${ei}" style="${iSGold}">`;
+  const iS2='background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:5px;padding:6px;color:#fff;font-size:11px;outline:none;width:100%;';
+  const iSBlue2='background:rgba(255,255,255,0.05);border:1px solid rgba(59,130,246,0.3);border-radius:5px;padding:6px;color:var(--blue);font-size:11px;outline:none;width:100%;';
+  const iSGreen2='background:rgba(255,255,255,0.05);border:1px solid rgba(34,197,94,0.25);border-radius:5px;padding:6px;color:#22c55e;font-size:11px;outline:none;width:100%;';
+  const iSPurple2='background:rgba(255,255,255,0.05);border:1px solid rgba(168,85,247,0.3);border-radius:5px;padding:6px;color:var(--purple);font-size:11px;outline:none;width:100%;';
+  const iSGold2='background:rgba(255,255,255,0.05);border:1px solid rgba(245,197,24,0.25);border-radius:5px;padding:6px;color:var(--gold);font-size:11px;outline:none;width:100%;';
+  const r=document.createElement('div');r.className='ep-row-a';r.style.cssText='margin-bottom:10px;padding:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:7px;';r.dataset.s=si;r.dataset.e=ei;r.dataset.new='1';
+  r.innerHTML=`<div style="display:grid;grid-template-columns:60px 1fr;gap:6px;margin-bottom:5px;">
+    <input type="number" value="${ei+1}" class="e-edit-n" data-s="${si}" data-e="${ei}" style="${iS2}" placeholder="Ep#">
+    <input type="text" placeholder="Episode Title..." class="e-edit-t" data-s="${si}" data-e="${ei}" style="${iS2}">
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 80px;gap:5px;margin-bottom:4px;">
+    <input type="text" placeholder="🔵 480p link..." class="e-edit-480" data-s="${si}" data-e="${ei}" style="${iSBlue2}">
+    <input type="text" placeholder="Size" class="e-edit-sz480" data-s="${si}" data-e="${ei}" style="${iS2}">
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 80px;gap:5px;margin-bottom:4px;">
+    <input type="text" placeholder="🟢 720p link..." class="e-edit-720" data-s="${si}" data-e="${ei}" style="${iSGreen2}">
+    <input type="text" placeholder="Size" class="e-edit-sz720" data-s="${si}" data-e="${ei}" style="${iS2}">
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 80px;gap:5px;margin-bottom:4px;">
+    <input type="text" placeholder="🟣 1080p link..." class="e-edit-1080" data-s="${si}" data-e="${ei}" style="${iSPurple2}">
+    <input type="text" placeholder="Size" class="e-edit-sz1080" data-s="${si}" data-e="${ei}" style="${iS2}">
+  </div>
+  <input type="text" placeholder="🇱🇰 SRT link..." class="e-edit-srt" data-s="${si}" data-e="${ei}" style="${iSGold2}">`;
   c.appendChild(r);
 }
 function addEditSeason(){
@@ -2023,8 +2086,12 @@ async function saveEdit(){
         eps.push({
           ep:parseInt(row.querySelector('.e-edit-n')?.value)||ei+1,
           title:row.querySelector('.e-edit-t')?.value||'',
-          dlLink:row.querySelector('.e-edit-l')?.value||'',
-          dlSize:row.querySelector('.e-edit-sz')?.value||'',
+          dl480:row.querySelector('.e-edit-480')?.value||'',
+          sz480:row.querySelector('.e-edit-sz480')?.value||'',
+          dl720:row.querySelector('.e-edit-720')?.value||'',
+          sz720:row.querySelector('.e-edit-sz720')?.value||'',
+          dl1080:row.querySelector('.e-edit-1080')?.value||'',
+          sz1080:row.querySelector('.e-edit-sz1080')?.value||'',
           srtLink:row.querySelector('.e-edit-srt')?.value||'',
           desc:''
         });
@@ -2405,4 +2472,4 @@ function resetColForm(){
 
 </script>
 </body>
-    </html>
+  </html>
