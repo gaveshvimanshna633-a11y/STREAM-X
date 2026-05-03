@@ -904,6 +904,24 @@ body{font-family:'Poppins',sans-serif;background:var(--black);color:var(--light)
         <div class="sec-title"><div class="sec-line"></div><span>TRENDING <span class="accent">TV SERIES</span></span></div>
         <div class="see-all" onclick="switchSection('tvseries')">SEE ALL <i class="fas fa-chevron-right"></i></div>
       </div>
+      <!-- TV Series Quality Notice Marquee -->
+      <div style="overflow:hidden;background:linear-gradient(90deg,rgba(229,9,20,0.08),rgba(229,9,20,0.04));border:1px solid rgba(229,9,20,0.2);border-radius:8px;padding:8px 0;margin-bottom:14px;">
+        <div style="display:flex;animation:tvMarquee 20s linear infinite;white-space:nowrap;will-change:transform;">
+          <span style="font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;color:rgba(229,9,20,0.9);letter-spacing:2px;flex-shrink:0;padding-right:60px;">
+            <i class="fas fa-tv" style="margin-right:8px;"></i>⚠️ අප ලබා දෙන tv series 720p යන quality එකෙන් පමනක් ලබා දේ &nbsp;&nbsp;•&nbsp;&nbsp;
+            <i class="fas fa-tv" style="margin-right:8px;"></i>⚠️ අප ලබා දෙන tv series 720p යන quality එකෙන් පමනක් ලබා දේ &nbsp;&nbsp;•&nbsp;&nbsp;
+            <i class="fas fa-tv" style="margin-right:8px;"></i>⚠️ අප ලබා දෙන tv series 720p යන quality එකෙන් පමනක් ලබා දේ &nbsp;&nbsp;•&nbsp;&nbsp;
+            <i class="fas fa-tv" style="margin-right:8px;"></i>⚠️ අප ලබා දෙන tv series 720p යන quality එකෙන් පමනක් ලබා දේ &nbsp;&nbsp;•&nbsp;&nbsp;
+          </span>
+          <span style="font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;color:rgba(229,9,20,0.9);letter-spacing:2px;flex-shrink:0;padding-right:60px;" aria-hidden="true">
+            <i class="fas fa-tv" style="margin-right:8px;"></i>⚠️ අප ලබා දෙන tv series 720p යන quality එකෙන් පමනක් ලබා දේ &nbsp;&nbsp;•&nbsp;&nbsp;
+            <i class="fas fa-tv" style="margin-right:8px;"></i>⚠️ අප ලබා දෙන tv series 720p යන quality එකෙන් පමනක් ලබා දේ &nbsp;&nbsp;•&nbsp;&nbsp;
+            <i class="fas fa-tv" style="margin-right:8px;"></i>⚠️ අප ලබා දෙන tv series 720p යන quality එකෙන් පමනක් ලබා දේ &nbsp;&nbsp;•&nbsp;&nbsp;
+            <i class="fas fa-tv" style="margin-right:8px;"></i>⚠️ අප ලබා දෙන tv series 720p යන quality එකෙන් පමනක් ලබා දේ &nbsp;&nbsp;•&nbsp;&nbsp;
+          </span>
+        </div>
+      </div>
+      <style>@keyframes tvMarquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}</style>
       <div class="scroll-row" id="tvRow"></div>
     </div>
     <footer id="footer">
@@ -1652,9 +1670,7 @@ function showEps(season){
     const hasSrt=ep.srtLink&&ep.srtLink.trim();
     const hasAny=has480||has720||has1080||hasLegacy;
     const qlButtons=[
-      has480?`<a href="${ep.dl480}" class="ep-ql-btn p480" target="_blank" download onclick="if(window._trackDownload)window._trackDownload();"><div class="ql-icon"><i class="fas fa-download"></i></div><div><div class="ql-label">480p</div><div class="ql-size">${ep.sz480||''}</div></div></a>`:'',
       has720?`<a href="${ep.dl720}" class="ep-ql-btn p720" target="_blank" download onclick="if(window._trackDownload)window._trackDownload();"><div class="ql-icon"><i class="fas fa-download"></i></div><div><div class="ql-label">720p</div><div class="ql-size">${ep.sz720||''}</div></div></a>`:'',
-      has1080?`<a href="${ep.dl1080}" class="ep-ql-btn p1080" target="_blank" download onclick="if(window._trackDownload)window._trackDownload();"><div class="ql-icon"><i class="fas fa-download"></i></div><div><div class="ql-label">1080p</div><div class="ql-size">${ep.sz1080||''}</div></div></a>`:'',
     ].filter(Boolean).join('');
     return `<div class="ep-card">
       <div class="ep-head"><div class="ep-n">E${ep.ep}</div><div><div class="ep-t">${ep.title||'Episode '+ep.ep}</div><div class="ep-d">${ep.desc||''}</div></div></div>
@@ -1828,18 +1844,14 @@ function addEp(s){
     <input type="number" value="${ep}" class="en" data-s="${s}" style="${iS}" placeholder="Ep#">
     <input type="text" placeholder="Episode Title..." class="et" data-s="${s}" style="${iS}">
   </div>
-  <div style="display:grid;grid-template-columns:1fr 80px;gap:5px;margin-bottom:4px;">
-    <input type="text" placeholder="🔵 480p Link..." class="el480" data-s="${s}" style="${iSBlue}">
-    <input type="text" placeholder="Size" class="esz480" data-s="${s}" style="${iS}">
-  </div>
+  <input type="text" class="el480" data-s="${s}" style="display:none;">
+  <input type="text" class="esz480" data-s="${s}" style="display:none;">
   <div style="display:grid;grid-template-columns:1fr 80px;gap:5px;margin-bottom:4px;">
     <input type="text" placeholder="🟢 720p Link..." class="el720" data-s="${s}" style="${iSGreen}">
     <input type="text" placeholder="Size" class="esz720" data-s="${s}" style="${iS}">
   </div>
-  <div style="display:grid;grid-template-columns:1fr 80px;gap:5px;margin-bottom:4px;">
-    <input type="text" placeholder="🟣 1080p Link..." class="el1080" data-s="${s}" style="${iSPurple}">
-    <input type="text" placeholder="Size" class="esz1080" data-s="${s}" style="${iS}">
-  </div>
+  <input type="text" class="el1080" data-s="${s}" style="display:none;">
+  <input type="text" class="esz1080" data-s="${s}" style="display:none;">
   <input type="text" placeholder="🇱🇰 SRT Subtitle link..." class="esrt" data-s="${s}" style="${iSGold}">`;
   c.appendChild(r);
 }
@@ -1939,18 +1951,14 @@ function openEdit(id,fbKey){
             <input type="number" value="${ep.ep}" class="e-edit-n" data-s="${si}" data-e="${ei}" style="${iS}" placeholder="Ep#">
             <input type="text" value="${(ep.title||'').replace(/"/g,'&quot;')}" class="e-edit-t" data-s="${si}" data-e="${ei}" style="${iS}">
           </div>
-          <div style="display:grid;grid-template-columns:1fr 80px;gap:5px;margin-bottom:4px;">
-            <input type="text" value="${ep.dl480||ep.dlLink||''}" class="e-edit-480" data-s="${si}" data-e="${ei}" style="${iSBlue}" placeholder="🔵 480p link...">
-            <input type="text" value="${ep.sz480||ep.dlSize||''}" class="e-edit-sz480" data-s="${si}" data-e="${ei}" style="${iS}" placeholder="Size">
-          </div>
+          <input type="text" value="${ep.dl480||ep.dlLink||''}" class="e-edit-480" data-s="${si}" data-e="${ei}" style="display:none;">
+          <input type="text" value="${ep.sz480||ep.dlSize||''}" class="e-edit-sz480" data-s="${si}" data-e="${ei}" style="display:none;">
           <div style="display:grid;grid-template-columns:1fr 80px;gap:5px;margin-bottom:4px;">
             <input type="text" value="${ep.dl720||''}" class="e-edit-720" data-s="${si}" data-e="${ei}" style="${iSGreen}" placeholder="🟢 720p link...">
             <input type="text" value="${ep.sz720||''}" class="e-edit-sz720" data-s="${si}" data-e="${ei}" style="${iS}" placeholder="Size">
           </div>
-          <div style="display:grid;grid-template-columns:1fr 80px;gap:5px;margin-bottom:4px;">
-            <input type="text" value="${ep.dl1080||''}" class="e-edit-1080" data-s="${si}" data-e="${ei}" style="${iSPurple}" placeholder="🟣 1080p link...">
-            <input type="text" value="${ep.sz1080||''}" class="e-edit-sz1080" data-s="${si}" data-e="${ei}" style="${iS}" placeholder="Size">
-          </div>
+          <input type="text" value="${ep.dl1080||''}" class="e-edit-1080" data-s="${si}" data-e="${ei}" style="display:none;">
+          <input type="text" value="${ep.sz1080||''}" class="e-edit-sz1080" data-s="${si}" data-e="${ei}" style="display:none;">
           <input type="text" value="${ep.srtLink||''}" class="e-edit-srt" data-s="${si}" data-e="${ei}" style="${iSGold}" placeholder="🇱🇰 SRT link...">
         </div>`;
       });
@@ -2020,18 +2028,14 @@ function addEditEp(si){
     <input type="number" value="${ei+1}" class="e-edit-n" data-s="${si}" data-e="${ei}" style="${iS2}" placeholder="Ep#">
     <input type="text" placeholder="Episode Title..." class="e-edit-t" data-s="${si}" data-e="${ei}" style="${iS2}">
   </div>
-  <div style="display:grid;grid-template-columns:1fr 80px;gap:5px;margin-bottom:4px;">
-    <input type="text" placeholder="🔵 480p link..." class="e-edit-480" data-s="${si}" data-e="${ei}" style="${iSBlue2}">
-    <input type="text" placeholder="Size" class="e-edit-sz480" data-s="${si}" data-e="${ei}" style="${iS2}">
-  </div>
+  <input type="text" placeholder="" class="e-edit-480" data-s="${si}" data-e="${ei}" style="display:none;">
+  <input type="text" placeholder="" class="e-edit-sz480" data-s="${si}" data-e="${ei}" style="display:none;">
   <div style="display:grid;grid-template-columns:1fr 80px;gap:5px;margin-bottom:4px;">
     <input type="text" placeholder="🟢 720p link..." class="e-edit-720" data-s="${si}" data-e="${ei}" style="${iSGreen2}">
     <input type="text" placeholder="Size" class="e-edit-sz720" data-s="${si}" data-e="${ei}" style="${iS2}">
   </div>
-  <div style="display:grid;grid-template-columns:1fr 80px;gap:5px;margin-bottom:4px;">
-    <input type="text" placeholder="🟣 1080p link..." class="e-edit-1080" data-s="${si}" data-e="${ei}" style="${iSPurple2}">
-    <input type="text" placeholder="Size" class="e-edit-sz1080" data-s="${si}" data-e="${ei}" style="${iS2}">
-  </div>
+  <input type="text" placeholder="" class="e-edit-1080" data-s="${si}" data-e="${ei}" style="display:none;">
+  <input type="text" placeholder="" class="e-edit-sz1080" data-s="${si}" data-e="${ei}" style="display:none;">
   <input type="text" placeholder="🇱🇰 SRT link..." class="e-edit-srt" data-s="${si}" data-e="${ei}" style="${iSGold2}">`;
   c.appendChild(r);
 }
