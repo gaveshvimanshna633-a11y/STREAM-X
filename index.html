@@ -329,6 +329,11 @@ body{font-family:'Poppins',sans-serif;background:var(--black);color:var(--light)
 .dt-desc{font-size:13px;line-height:1.7;letter-spacing:0.4px;color:rgba(255,255,255,0.65);margin-bottom:10px;}
 .dt-writer{font-size:11px;color:rgba(255,255,255,0.3);display:flex;align-items:center;gap:6px;}
 .dt-writer i{color:var(--red);font-size:10px;}
+/* INFO TABLE */
+.dt-info-row{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.dt-info-row:last-child{border-bottom:none;}
+.dt-info-lbl{font-family:'Rajdhani',sans-serif;font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.35);text-transform:uppercase;flex:0 0 150px;}
+.dt-info-val{font-size:13px;color:rgba(255,255,255,0.75);font-weight:500;}
 
 .dt-alert{display:flex;gap:12px;align-items:flex-start;background:#161616;border:1px solid rgba(255,255,255,0.05);border-left:4px solid var(--blue);border-radius:9px;padding:13px 16px;margin:14px 0;}
 .dt-alert.danger{border-left-color:#ff4466;}
@@ -982,6 +987,8 @@ body{font-family:'Poppins',sans-serif;background:var(--black);color:var(--light)
         <div class="dt-desc" id="dtDesc"></div>
         <div class="dt-writer" id="dtWriter"></div>
       </div>
+      <!-- Info Table: Language, Country, Director etc -->
+      <div id="dtInfoTable" style="margin:14px 0;display:none;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;"></div>
 
       <!-- Notice Box -->
       <div class="notice-box" onclick="openGuidePopup()">
@@ -1261,6 +1268,18 @@ body{font-family:'Poppins',sans-serif;background:var(--black);color:var(--light)
 
           <div class="fg"><label>Description</label><textarea id="fDesc" placeholder="Description..."></textarea></div>
           <div class="fg"><label>Description Writer</label><input type="text" id="fWriter" placeholder="Written by..."></div>
+          <div class="grid2">
+            <div class="fg"><label>🌐 Language</label><input type="text" id="fLang" placeholder="e.g. Sinhala, English, Tamil..."></div>
+            <div class="fg"><label>🌍 Country</label><input type="text" id="fCountry" placeholder="e.g. Sri Lanka, India..."></div>
+          </div>
+          <div class="grid2">
+            <div class="fg"><label>🎬 Director</label><input type="text" id="fDirector" placeholder="Director name(s)..."></div>
+            <div class="fg"><label>⭐ Stars</label><input type="text" id="fStars" placeholder="Actor 1, Actor 2..."></div>
+          </div>
+          <div class="grid2">
+            <div class="fg"><label>✍️ Subtitle Author</label><input type="text" id="fSubAuthor" placeholder="Subtitle author name..."></div>
+            <div class="fg"><label>🔗 Subtitle Site</label><input type="text" id="fSubSite" placeholder="e.g. Zoom.LK, ZooTV..."></div>
+          </div>
           <div class="fg">
             <label>🏷 Badges</label>
             <div class="badge-builder">
@@ -1644,6 +1663,23 @@ function renderDetail(){
   if(c.isAdult)bHtml+=`<span class="sp-badge spb-18">🔞 Adults Only</span>`;
   document.getElementById('dtBadges').innerHTML=bHtml;
 
+  // Info table (Language, Country, Director, Stars, Subtitle Author, Subtitle Site)
+  const infoRows=[
+    c.lang?['🌐 Language',c.lang]:null,
+    c.country?['🌍 Country',c.country]:null,
+    c.director?['🎬 Director',c.director]:null,
+    c.stars?['⭐ Stars',c.stars]:null,
+    c.subAuthor?['✍️ Subtitle Author',c.subAuthor]:null,
+    c.subSite?['🔗 Subtitle Site',c.subSite]:null,
+  ].filter(Boolean);
+  const infoEl=document.getElementById('dtInfoTable');
+  if(infoEl){
+    if(infoRows.length){
+      infoEl.style.display='block';
+      infoEl.innerHTML=infoRows.map(([lbl,val])=>`<div class="dt-info-row"><span class="dt-info-lbl">${lbl}</span><span class="dt-info-val">${val}</span></div>`).join('');
+    } else infoEl.style.display='none';
+  }
+
   const alertEl=document.getElementById('dtAlert');
   if(c.isAdult){alertEl.style.display='flex';alertEl.className='dt-alert danger';alertEl.querySelector('i').className='fas fa-exclamation-triangle';document.getElementById('dtAlertText').textContent='🔞 This content is rated 18+. Viewer discretion is advised.';}
   else if(c.type==='tvseries'){alertEl.style.display='flex';alertEl.className='dt-alert';alertEl.querySelector('i').className='fas fa-info-circle';document.getElementById('dtAlertText').textContent='📺 Select a season and episode below to download.';}
@@ -1937,7 +1973,7 @@ async function submitContent(){
   const badges=Object.keys(activeBadges).filter(k=>activeBadges[k]);
   const cast=[];document.querySelectorAll('#castBuilder .cast-row-a').forEach(row=>{const name=row.querySelector('.c-name')?.value.trim();if(name)cast.push({name,role:row.querySelector('.c-role')?.value.trim()||'',photo:row.querySelector('.c-photo')?.value.trim()||''});});
   const qimages=addImgData.map(d=>d.url);
-  const item={id:Date.now(),type,title,category:document.getElementById('fCat').value,year:parseInt(document.getElementById('fYear').value)||new Date().getFullYear(),rating:parseFloat(document.getElementById('fRating').value)||7.0,duration:document.getElementById('fDuration').value.trim()||'',qtype:document.getElementById('fQtype').value||'WEB',thumb:document.getElementById('fThumb').value.trim()||`https://via.placeholder.com/200x300/1a1a1a/333?text=${encodeURIComponent(title)}`,qimages,desc:document.getElementById('fDesc').value.trim()||'',writer:document.getElementById('fWriter').value.trim()||'',trailer:document.getElementById('fTrailer').value.trim()||'',badges,seasonNum:document.getElementById('fSeasonNum').value.trim(),cast,isAdult:isAdult18};
+  const item={id:Date.now(),type,title,category:document.getElementById('fCat').value,year:parseInt(document.getElementById('fYear').value)||new Date().getFullYear(),rating:parseFloat(document.getElementById('fRating').value)||7.0,duration:document.getElementById('fDuration').value.trim()||'',qtype:document.getElementById('fQtype').value||'WEB',thumb:document.getElementById('fThumb').value.trim()||`https://via.placeholder.com/200x300/1a1a1a/333?text=${encodeURIComponent(title)}`,qimages,desc:document.getElementById('fDesc').value.trim()||'',writer:document.getElementById('fWriter').value.trim()||'',lang:document.getElementById('fLang')?.value.trim()||'',country:document.getElementById('fCountry')?.value.trim()||'',director:document.getElementById('fDirector')?.value.trim()||'',stars:document.getElementById('fStars')?.value.trim()||'',subAuthor:document.getElementById('fSubAuthor')?.value.trim()||'',subSite:document.getElementById('fSubSite')?.value.trim()||'',trailer:document.getElementById('fTrailer').value.trim()||'',badges,seasonNum:document.getElementById('fSeasonNum').value.trim(),cast,isAdult:isAdult18};
   if(type==='movie'){
     item.downloads=[];
     [['480p','d480','d480size','d480lang'],['720p','d720','d720size','d720lang'],['1080p','d1080','d1080size','d1080lang']].forEach(([q,lk,sz,lg])=>{
@@ -1959,7 +1995,7 @@ async function submitContent(){
   if(window._fbSave){try{await window._fbSave(item);showToast('"'+title+'" published! 🔥','success');}catch(e){showToast('Failed: '+e.message);return;}}
   else{window.allContent.unshift(item);showToast('"'+title+'" saved!','success');initHome();updateStats();}
   // Reset
-  ['fTitle','fYear','fRating','fDuration','fThumb','fDesc','fWriter','fTrailer','fSeasonNum','d480','d480size','d480lang','d720','d720size','d720lang','d1080','d1080size','d1080lang','dSrt','fSeasons'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['fTitle','fYear','fRating','fDuration','fThumb','fDesc','fWriter','fLang','fCountry','fDirector','fStars','fSubAuthor','fSubSite','fTrailer','fSeasonNum','d480','d480size','d480lang','d720','d720size','d720lang','d1080','d1080size','d1080lang','dSrt','fSeasons'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('pThumb').style.display='none';
   document.getElementById('seasonBuilder').innerHTML='';document.getElementById('castBuilder').innerHTML='';
   Object.keys(activeBadges).forEach(k=>activeBadges[k]=false);document.querySelectorAll('.badge-toggle').forEach(b=>b.classList.remove('on'));
@@ -2063,6 +2099,9 @@ function openEdit(id,fbKey){
     ${eImgsHtml}
     ${ta('desc','Description',item.desc)}
     ${f('Writer','writer',item.writer)} ${f('Trailer URL','trailer',item.trailer)}
+    <div class="grid2">${f('🌐 Language','lang',item.lang||'')} ${f('🌍 Country','country',item.country||'')}</div>
+    <div class="grid2">${f('🎬 Director','director',item.director||'')} ${f('⭐ Stars','stars',item.stars||'')}</div>
+    <div class="grid2">${f('✍️ Subtitle Author','subAuthor',item.subAuthor||'')} ${f('🔗 Subtitle Site','subSite',item.subSite||'')}</div>
     ${f('Season Number (badge)','seasonNum',item.seasonNum,'text','e.g. 5')}
     <div class="fg"><label>🏷 Badges</label><div class="badge-builder" id="eBadgeBuilder">${bdgHtml}</div></div>
     ${item.type==='movie'?`
@@ -2141,6 +2180,8 @@ async function saveEdit(){
     duration:ev('duration'),qtype:ev('qtype')||editingItem.qtype||'WEB',
     thumb:ev('thumb')||editingItem.thumb,qimages:window._eImgs||editingItem.qimages||[],
     desc:ev('desc')||editingItem.desc,writer:ev('writer'),trailer:ev('trailer'),
+    lang:ev('lang'),country:ev('country'),director:ev('director'),stars:ev('stars'),
+    subAuthor:ev('subAuthor'),subSite:ev('subSite'),
     seasonNum:ev('seasonNum'),badges:editedBadges,isAdult:finalAdult
   };
   if(editingItem.type==='movie'){
