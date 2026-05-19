@@ -1,60 +1,63 @@
 {
+  "id": "https://cineflix-lk.vercel.app/",
   "name": "StreamX - Sinhala Movies & Series",
   "short_name": "StreamX",
   "description": "Sinhala Dubbed & Subtitled Movies and TV Series",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "https://cineflix-lk.vercel.app/",
+  "scope": "https://cineflix-lk.vercel.app/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0a0a0a",
   "theme_color": "#e50914",
   "lang": "si",
-  "categories": ["entertainment"],
+  "categories": [
+    "entertainment"
+  ],
   "icons": [
     {
-      "src": "/icons/icon-72.png",
+      "src": "https://cineflix-lk.vercel.app/icons/icon-72.png",
       "sizes": "72x72",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-96.png",
+      "src": "https://cineflix-lk.vercel.app/icons/icon-96.png",
       "sizes": "96x96",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-128.png",
+      "src": "https://cineflix-lk.vercel.app/icons/icon-128.png",
       "sizes": "128x128",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-144.png",
+      "src": "https://cineflix-lk.vercel.app/icons/icon-144.png",
       "sizes": "144x144",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-152.png",
+      "src": "https://cineflix-lk.vercel.app/icons/icon-152.png",
       "sizes": "152x152",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-192.png",
+      "src": "https://cineflix-lk.vercel.app/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-384.png",
+      "src": "https://cineflix-lk.vercel.app/icons/icon-384.png",
       "sizes": "384x384",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "https://cineflix-lk.vercel.app/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -62,8 +65,8 @@
   ],
   "screenshots": [
     {
-      "src": "/screenshots/screen1.png",
-      "sizes": "390x844",
+      "src": "https://cineflix-lk.vercel.app/icons/icon-512.png",
+      "sizes": "512x512",
       "type": "image/png",
       "form_factor": "narrow",
       "label": "StreamX Home"
@@ -74,15 +77,27 @@
       "name": "Movies",
       "short_name": "Movies",
       "description": "Browse Movies",
-      "url": "/?tab=movies",
-      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
+      "url": "https://cineflix-lk.vercel.app/?tab=movies",
+      "icons": [
+        {
+          "src": "https://cineflix-lk.vercel.app/icons/icon-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
     },
     {
       "name": "TV Series",
       "short_name": "Series",
       "description": "Browse TV Series",
-      "url": "/?tab=series",
-      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
+      "url": "https://cineflix-lk.vercel.app/?tab=series",
+      "icons": [
+        {
+          "src": "https://cineflix-lk.vercel.app/icons/icon-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }
